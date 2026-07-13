@@ -1,0 +1,79 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+
+  courses Course[]
+  rounds  Round[]
+}
+
+model Course {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  location    String?
+  creatorId   String
+  createdAt   DateTime @default(now())
+
+  creator User    @relation(fields: [creatorId], references: [id])
+  holes   Hole[]
+  rounds  Round[]
+
+  @@index([creatorId])
+}
+
+model Hole {
+  id       String  @id @default(cuid())
+  courseId String
+  index    Int
+  name     String?
+  par      Int
+  teeLat   Float
+  teeLng   Float
+  holeLat  Float
+  holeLng  Float
+
+  course     Course      @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  roundHoles RoundHole[]
+
+  @@unique([courseId, index])
+}
+
+model Round {
+  id            String    @id @default(cuid())
+  courseId      String
+  playerId      String
+  totalStrokes  Int
+  durationSecs  Int?
+  completedAt   DateTime  @default(now())
+
+  course     Course      @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  player     User        @relation(fields: [playerId], references: [id])
+  roundHoles RoundHole[]
+
+  @@index([courseId, totalStrokes])
+  @@index([playerId])
+}
+
+model RoundHole {
+  id      String @id @default(cuid())
+  roundId String
+  holeId  String
+  strokes Int
+
+  round Round @relation(fields: [roundId], references: [id], onDelete: Cascade)
+  hole  Hole  @relation(fields: [holeId], references: [id])
+
+  @@unique([roundId, holeId])
+}

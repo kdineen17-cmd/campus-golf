@@ -1,0 +1,40 @@
+{
+  "expo": {
+    "name": "Campus Golf",
+    "slug": "campus-golf",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "scheme": "campusgolf",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.campusgolf.app",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Campus Golf uses your location to record tee and hole positions while you build a course, and to track your position while you play."
+      }
+    },
+    "android": {
+      "package": "com.campusgolf.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Campus Golf uses your location to record tee and hole positions while you build a course, and to track your position while you play."
+        }
+      ]
+    ]
+  }
+}
