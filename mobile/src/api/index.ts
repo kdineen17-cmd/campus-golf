@@ -5,8 +5,10 @@ import {
   CourseSummary,
   LeaderboardEntry,
   NewCourseInput,
+  NewHoleInput,
   RoundHistoryEntry,
   RoundResult,
+  UpdateCourseInput,
 } from "./types";
 
 export const api = {
@@ -34,6 +36,14 @@ export const api = {
 
   createCourse(input: NewCourseInput, token: string) {
     return apiRequest<CourseSummary>("/courses", { method: "POST", body: input, token });
+  },
+
+  updateCourse(courseId: string, input: UpdateCourseInput, token: string) {
+    return apiRequest<CourseDetail>(`/courses/${courseId}`, { method: "PATCH", body: input, token });
+  },
+
+  addHole(courseId: string, input: NewHoleInput, token: string) {
+    return apiRequest<CourseDetail>(`/courses/${courseId}/holes`, { method: "POST", body: input, token });
   },
 
   deleteCourse(courseId: string, token: string) {

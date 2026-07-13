@@ -54,6 +54,12 @@ export interface NewCourseInput {
   holes: NewHoleInput[];
 }
 
+export interface UpdateCourseInput {
+  name?: string;
+  description?: string | null;
+  location?: string | null;
+}
+
 export interface RoundResult {
   id: string;
   courseId: string;

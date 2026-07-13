@@ -151,7 +151,18 @@ export function CourseDetailScreen({ route, navigation }: Props) {
         ))}
 
         {isCreator && (
-          <View style={styles.dangerZone}>
+          <View style={styles.creatorTools}>
+            <Text style={styles.sectionTitle}>Manage course</Text>
+            <Button
+              title="Add a hole"
+              variant="secondary"
+              onPress={() => navigation.navigate("AddHole", { courseId })}
+            />
+            <Button
+              title="Edit details"
+              variant="secondary"
+              onPress={() => navigation.navigate("EditCourse", { courseId })}
+            />
             <Button title="Delete course" variant="danger" onPress={confirmDelete} loading={deleting} />
           </View>
         )}
@@ -207,5 +218,5 @@ const styles = StyleSheet.create({
   leaderName: { flex: 1, fontSize: 15, fontWeight: "600", color: colors.ink },
   leaderStrokes: { fontSize: 13, color: colors.fairway, fontWeight: "600" },
   leaderDuration: { fontSize: 12, color: colors.muted, marginLeft: spacing.sm },
-  dangerZone: { marginTop: spacing.xl },
+  creatorTools: { marginTop: spacing.xl, gap: spacing.sm },
 });

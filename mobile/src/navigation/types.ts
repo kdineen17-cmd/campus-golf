@@ -13,4 +13,6 @@ export type AppStackParamList = {
   MainTabs: undefined;
   CourseDetail: { courseId: string };
   Play: { courseId: string };
+  AddHole: { courseId: string };
+  EditCourse: { courseId: string };
 };
