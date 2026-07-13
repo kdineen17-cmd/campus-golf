@@ -1,13 +1,21 @@
-import { useFocusEffect } from "@react-navigation/native";
+import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
+import { CompositeScreenProps, useFocusEffect } from "@react-navigation/native";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useCallback, useState } from "react";
 import { ActivityIndicator, FlatList, StyleSheet, Text, View } from "react-native";
 import { api, ApiError, RoundHistoryEntry } from "../api";
 import { Button } from "../components/Button";
 import { useAuth } from "../context/AuthContext";
+import { AppStackParamList, MainTabParamList } from "../navigation/types";
 import { colors, spacing } from "../theme";
 import { formatDuration } from "../utils/format";
 
-export function ProfileScreen() {
+type Props = CompositeScreenProps<
+  BottomTabScreenProps<MainTabParamList, "ProfileTab">,
+  NativeStackScreenProps<AppStackParamList>
+>;
+
+export function ProfileScreen({ navigation }: Props) {
   const { user, token, logout } = useAuth();
   const [rounds, setRounds] = useState<RoundHistoryEntry[] | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -80,6 +88,7 @@ export function ProfileScreen() {
       />
 
       <View style={styles.footer}>
+        <Button title="Official Rules" variant="secondary" onPress={() => navigation.navigate("Rules")} />
         <Button title="Log out" variant="danger" onPress={logout} />
       </View>
     </View>
@@ -111,5 +120,5 @@ const styles = StyleSheet.create({
   meta: { fontSize: 12, color: colors.muted, marginTop: 2 },
   strokes: { fontSize: 18, fontWeight: "800", color: colors.fairway, width: 32, textAlign: "right" },
   relative: { fontSize: 12, color: colors.muted, width: 28, textAlign: "right" },
-  footer: { padding: spacing.lg },
+  footer: { padding: spacing.lg, gap: spacing.sm },
 });

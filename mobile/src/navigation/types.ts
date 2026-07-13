@@ -15,4 +15,5 @@ export type AppStackParamList = {
   Play: { courseId: string };
   AddHole: { courseId: string };
   EditCourse: { courseId: string };
+  Rules: undefined;
 };

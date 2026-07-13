@@ -3,6 +3,7 @@ import { AddHoleScreen } from "../screens/AddHoleScreen";
 import { CourseDetailScreen } from "../screens/CourseDetailScreen";
 import { EditCourseScreen } from "../screens/EditCourseScreen";
 import { PlayScreen } from "../screens/PlayScreen";
+import { RulesScreen } from "../screens/RulesScreen";
 import { colors } from "../theme";
 import { MainTabNavigator } from "./MainTabNavigator";
 import { AppStackParamList } from "./types";
@@ -23,6 +24,7 @@ export function AppNavigator() {
       <Stack.Screen name="Play" component={PlayScreen} options={{ title: "Play" }} />
       <Stack.Screen name="AddHole" component={AddHoleScreen} options={{ title: "Add a hole" }} />
       <Stack.Screen name="EditCourse" component={EditCourseScreen} options={{ title: "Edit course" }} />
+      <Stack.Screen name="Rules" component={RulesScreen} options={{ title: "Official Rules" }} />
     </Stack.Navigator>
   );
 }
