@@ -10,3 +10,7 @@ export function formatDuration(totalSeconds: number): string {
   const secs = totalSeconds % 60;
   return `${mins}:${secs.toString().padStart(2, "0")}`;
 }
+
+export function formatHoleCount(count: number): string {
+  return `${count} ${count === 1 ? "hole" : "holes"}`;
+}

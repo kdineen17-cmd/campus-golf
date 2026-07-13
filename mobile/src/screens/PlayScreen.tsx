@@ -2,9 +2,10 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import * as Location from "expo-location";
 import { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from "react-native";
-import MapView, { Marker, Polyline } from "react-native-maps";
 import { api, ApiError, CourseDetail, LatLng } from "../api";
 import { Button } from "../components/Button";
+import { HoleMap } from "../components/HoleMap";
+import { MapMarkerSpec } from "../components/HoleMapTypes";
 import { Stepper } from "../components/Stepper";
 import { useAuth } from "../context/AuthContext";
 import { AppStackParamList } from "../navigation/types";
@@ -92,28 +93,18 @@ export function PlayScreen({ route, navigation }: Props) {
     const region = regionForPoints(
       playerLocation ? [hole.tee, hole.hole, playerLocation] : [hole.tee, hole.hole]
     );
+    const markers: MapMarkerSpec[] = [
+      { id: "tee", lat: hole.tee.lat, lng: hole.tee.lng, color: colors.fairway, title: "Tee" },
+      { id: "hole", lat: hole.hole.lat, lng: hole.hole.lng, color: colors.gold, title: hole.name ?? `Hole ${hole.index + 1}` },
+      ...(playerLocation
+        ? [{ id: "player", lat: playerLocation.lat, lng: playerLocation.lng, color: "#1E88E5", title: "You" }]
+        : []),
+    ];
+    const polylines = [{ id: "route", points: [hole.tee, hole.hole], color: colors.fairway }];
 
     return (
       <View style={styles.container}>
-        <MapView style={styles.map} region={region}>
-          <Marker coordinate={{ latitude: hole.tee.lat, longitude: hole.tee.lng }} pinColor={colors.fairway} title="Tee" />
-          <Marker
-            coordinate={{ latitude: hole.hole.lat, longitude: hole.hole.lng }}
-            pinColor={colors.gold}
-            title={hole.name ?? `Hole ${hole.index + 1}`}
-          />
-          {playerLocation && (
-            <Marker coordinate={{ latitude: playerLocation.lat, longitude: playerLocation.lng }} pinColor="#1E88E5" title="You" />
-          )}
-          <Polyline
-            coordinates={[
-              { latitude: hole.tee.lat, longitude: hole.tee.lng },
-              { latitude: hole.hole.lat, longitude: hole.hole.lng },
-            ]}
-            strokeColor={colors.fairway}
-            strokeWidth={3}
-          />
-        </MapView>
+        <HoleMap style={styles.map} region={region} markers={markers} polylines={polylines} live />
 
         <View style={styles.body}>
           <Text style={styles.holeLabel}>

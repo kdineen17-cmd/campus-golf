@@ -15,7 +15,7 @@ import {
 import { api, ApiError, CourseSummary, LatLng } from "../api";
 import { AppStackParamList, MainTabParamList } from "../navigation/types";
 import { colors, spacing } from "../theme";
-import { formatDistance } from "../utils/format";
+import { formatDistance, formatHoleCount } from "../utils/format";
 import { distanceMeters } from "../utils/geo";
 import { getCurrentLatLng } from "../utils/location";
 
@@ -108,7 +108,7 @@ export function CourseListScreen({ navigation }: Props) {
               </View>
               {item.location && <Text style={styles.cardLocation}>{item.location}</Text>}
               <View style={styles.cardMetaRow}>
-                <Text style={styles.cardMeta}>{item.holeCount} holes</Text>
+                <Text style={styles.cardMeta}>{formatHoleCount(item.holeCount)}</Text>
                 <Text style={styles.cardMeta}>Par {item.totalPar}</Text>
                 <Text style={styles.cardMeta}>{formatDistance(item.totalDistanceMeters)}</Text>
               </View>

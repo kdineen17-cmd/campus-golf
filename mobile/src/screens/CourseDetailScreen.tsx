@@ -1,14 +1,15 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Fragment, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, View } from "react-native";
-import MapView, { Marker, Polyline } from "react-native-maps";
 import { api, ApiError, CourseDetail, LeaderboardEntry } from "../api";
 import { Button } from "../components/Button";
+import { HoleMap } from "../components/HoleMap";
+import { MapMarkerSpec, MapPolylineSpec } from "../components/HoleMapTypes";
 import { useAuth } from "../context/AuthContext";
 import { AppStackParamList } from "../navigation/types";
 import { colors, spacing } from "../theme";
-import { formatDistance, formatDuration } from "../utils/format";
+import { formatDistance, formatDuration, formatHoleCount } from "../utils/format";
 import { regionForPoints } from "../utils/region";
 
 type Props = NativeStackScreenProps<AppStackParamList, "CourseDetail">;
@@ -61,6 +62,23 @@ export function CourseDetailScreen({ route, navigation }: Props) {
   const region = regionForPoints(allPoints);
   const isCreator = user?.id === course.creator.id;
 
+  const markers: MapMarkerSpec[] = course.holes.flatMap((hole) => [
+    { id: `${hole.id}-tee`, lat: hole.tee.lat, lng: hole.tee.lng, color: colors.fairway, title: `Hole ${hole.index + 1} tee` },
+    {
+      id: `${hole.id}-hole`,
+      lat: hole.hole.lat,
+      lng: hole.hole.lng,
+      color: colors.gold,
+      title: hole.name ?? `Hole ${hole.index + 1}`,
+      description: `Par ${hole.par}`,
+    },
+  ]);
+  const polylines: MapPolylineSpec[] = course.holes.map((hole) => ({
+    id: hole.id,
+    points: [hole.tee, hole.hole],
+    color: colors.fairway,
+  }));
+
   function confirmDelete() {
     Alert.alert("Delete course?", `"${course!.name}" and all of its rounds will be removed permanently.`, [
       { text: "Cancel", style: "cancel" },
@@ -82,31 +100,7 @@ export function CourseDetailScreen({ route, navigation }: Props) {
 
   return (
     <ScrollView style={styles.container}>
-      <MapView style={styles.map} initialRegion={region}>
-        {course.holes.map((hole) => (
-          <Fragment key={hole.id}>
-            <Marker
-              coordinate={{ latitude: hole.tee.lat, longitude: hole.tee.lng }}
-              pinColor={colors.fairway}
-              title={`Hole ${hole.index + 1} tee`}
-            />
-            <Marker
-              coordinate={{ latitude: hole.hole.lat, longitude: hole.hole.lng }}
-              pinColor={colors.gold}
-              title={hole.name ?? `Hole ${hole.index + 1}`}
-              description={`Par ${hole.par}`}
-            />
-            <Polyline
-              coordinates={[
-                { latitude: hole.tee.lat, longitude: hole.tee.lng },
-                { latitude: hole.hole.lat, longitude: hole.hole.lng },
-              ]}
-              strokeColor={colors.fairway}
-              strokeWidth={3}
-            />
-          </Fragment>
-        ))}
-      </MapView>
+      <HoleMap style={styles.map} region={region} markers={markers} polylines={polylines} />
 
       <View style={styles.body}>
         <Text style={styles.title}>{course.name}</Text>
@@ -114,7 +108,7 @@ export function CourseDetailScreen({ route, navigation }: Props) {
         {course.description && <Text style={styles.description}>{course.description}</Text>}
 
         <View style={styles.metaRow}>
-          <Text style={styles.metaItem}>{course.holeCount} holes</Text>
+          <Text style={styles.metaItem}>{formatHoleCount(course.holeCount)}</Text>
           <Text style={styles.metaItem}>Par {course.totalPar}</Text>
           <Text style={styles.metaItem}>{formatDistance(course.totalDistanceMeters)}</Text>
         </View>
