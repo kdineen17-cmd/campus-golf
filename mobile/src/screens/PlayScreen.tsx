@@ -10,19 +10,9 @@ import { useAuth } from "../context/AuthContext";
 import { AppStackParamList } from "../navigation/types";
 import { colors, spacing } from "../theme";
 import { formatDistance, formatDuration } from "../utils/format";
+import { distanceMeters } from "../utils/geo";
 import { ensureLocationPermission } from "../utils/location";
 import { regionForPoints } from "../utils/region";
-
-const EARTH_RADIUS_METERS = 6371000;
-function distanceMeters(a: LatLng, b: LatLng) {
-  const toRad = (d: number) => (d * Math.PI) / 180;
-  const dLat = toRad(b.lat - a.lat);
-  const dLng = toRad(b.lng - a.lng);
-  const h =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.sin(dLng / 2) ** 2;
-  return EARTH_RADIUS_METERS * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
-}
 
 type Props = NativeStackScreenProps<AppStackParamList, "Play">;
 type Phase = "loading" | "playing" | "summary" | "submitted";

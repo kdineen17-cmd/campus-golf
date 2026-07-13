@@ -19,18 +19,8 @@ import { useAuth } from "../context/AuthContext";
 import { AppStackParamList, MainTabParamList } from "../navigation/types";
 import { colors, spacing } from "../theme";
 import { formatDistance } from "../utils/format";
+import { distanceMeters } from "../utils/geo";
 import { getCurrentLatLng, LocationPermissionError } from "../utils/location";
-
-const EARTH_RADIUS_METERS = 6371000;
-function distanceMeters(a: LatLng, b: LatLng) {
-  const toRad = (d: number) => (d * Math.PI) / 180;
-  const dLat = toRad(b.lat - a.lat);
-  const dLng = toRad(b.lng - a.lng);
-  const h =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.sin(dLng / 2) ** 2;
-  return EARTH_RADIUS_METERS * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
-}
 
 type Props = CompositeScreenProps<
   BottomTabScreenProps<MainTabParamList, "CreateTab">,

@@ -5,6 +5,7 @@ import {
   CourseSummary,
   LeaderboardEntry,
   NewCourseInput,
+  RoundHistoryEntry,
   RoundResult,
 } from "./types";
 
@@ -33,6 +34,14 @@ export const api = {
 
   createCourse(input: NewCourseInput, token: string) {
     return apiRequest<CourseSummary>("/courses", { method: "POST", body: input, token });
+  },
+
+  deleteCourse(courseId: string, token: string) {
+    return apiRequest<void>(`/courses/${courseId}`, { method: "DELETE", token });
+  },
+
+  getMyRounds(token: string) {
+    return apiRequest<RoundHistoryEntry[]>("/users/me/rounds", { token });
   },
 
   getLeaderboard(courseId: string) {

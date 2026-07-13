@@ -73,7 +73,7 @@ model RoundHole {
   strokes Int
 
   round Round @relation(fields: [roundId], references: [id], onDelete: Cascade)
-  hole  Hole  @relation(fields: [holeId], references: [id])
+  hole  Hole  @relation(fields: [holeId], references: [id], onDelete: Cascade)
 
   @@unique([roundId, holeId])
 }

@@ -6,6 +6,7 @@ export type AuthStackParamList = {
 export type MainTabParamList = {
   CoursesTab: undefined;
   CreateTab: undefined;
+  ProfileTab: undefined;
 };
 
 export type AppStackParamList = {

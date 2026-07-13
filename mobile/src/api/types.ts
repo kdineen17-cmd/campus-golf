@@ -23,6 +23,7 @@ export interface CourseSummary {
   holeCount: number;
   totalPar: number;
   totalDistanceMeters: number;
+  firstTee: LatLng | null;
 }
 
 export interface HoleDetail {
@@ -66,6 +67,14 @@ export interface RoundResult {
 export interface LeaderboardEntry {
   rank: number;
   player: UserSummary;
+  totalStrokes: number;
+  durationSecs: number | null;
+  completedAt: string;
+}
+
+export interface RoundHistoryEntry {
+  id: string;
+  course: { id: string; name: string; totalPar: number };
   totalStrokes: number;
   durationSecs: number | null;
   completedAt: string;

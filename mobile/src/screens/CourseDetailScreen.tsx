@@ -1,10 +1,11 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Fragment, useCallback, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, View } from "react-native";
 import MapView, { Marker, Polyline } from "react-native-maps";
 import { api, ApiError, CourseDetail, LeaderboardEntry } from "../api";
 import { Button } from "../components/Button";
+import { useAuth } from "../context/AuthContext";
 import { AppStackParamList } from "../navigation/types";
 import { colors, spacing } from "../theme";
 import { formatDistance, formatDuration } from "../utils/format";
@@ -14,9 +15,11 @@ type Props = NativeStackScreenProps<AppStackParamList, "CourseDetail">;
 
 export function CourseDetailScreen({ route, navigation }: Props) {
   const { courseId } = route.params;
+  const { user, token } = useAuth();
   const [course, setCourse] = useState<CourseDetail | null>(null);
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const load = useCallback(async () => {
     try {
@@ -56,6 +59,26 @@ export function CourseDetailScreen({ route, navigation }: Props) {
 
   const allPoints = course.holes.flatMap((h) => [h.tee, h.hole]);
   const region = regionForPoints(allPoints);
+  const isCreator = user?.id === course.creator.id;
+
+  function confirmDelete() {
+    Alert.alert("Delete course?", `"${course!.name}" and all of its rounds will be removed permanently.`, [
+      { text: "Cancel", style: "cancel" },
+      { text: "Delete", style: "destructive", onPress: deleteCourse },
+    ]);
+  }
+
+  async function deleteCourse() {
+    if (!token) return;
+    setDeleting(true);
+    try {
+      await api.deleteCourse(courseId, token);
+      navigation.navigate("MainTabs");
+    } catch (e) {
+      setError(e instanceof ApiError ? e.message : "Could not delete this course.");
+      setDeleting(false);
+    }
+  }
 
   return (
     <ScrollView style={styles.container}>
@@ -126,6 +149,12 @@ export function CourseDetailScreen({ route, navigation }: Props) {
             )}
           </View>
         ))}
+
+        {isCreator && (
+          <View style={styles.dangerZone}>
+            <Button title="Delete course" variant="danger" onPress={confirmDelete} loading={deleting} />
+          </View>
+        )}
       </View>
     </ScrollView>
   );
@@ -178,4 +207,5 @@ const styles = StyleSheet.create({
   leaderName: { flex: 1, fontSize: 15, fontWeight: "600", color: colors.ink },
   leaderStrokes: { fontSize: 13, color: colors.fairway, fontWeight: "600" },
   leaderDuration: { fontSize: 12, color: colors.muted, marginLeft: spacing.sm },
+  dangerZone: { marginTop: spacing.xl },
 });

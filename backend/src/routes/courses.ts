@@ -32,13 +32,21 @@ function courseSummary(course: {
   location: string | null;
   createdAt: Date;
   creator: { id: string; username: string };
-  holes: { par: number; teeLat: number; teeLng: number; holeLat: number; holeLng: number }[];
+  holes: {
+    index: number;
+    par: number;
+    teeLat: number;
+    teeLng: number;
+    holeLat: number;
+    holeLng: number;
+  }[];
 }) {
   const totalPar = course.holes.reduce((sum, h) => sum + h.par, 0);
   const totalDistanceMeters = course.holes.reduce(
     (sum, h) => sum + haversineMeters(h.teeLat, h.teeLng, h.holeLat, h.holeLng),
     0
   );
+  const firstTee = course.holes.find((h) => h.index === 0) ?? course.holes[0];
   return {
     id: course.id,
     name: course.name,
@@ -49,6 +57,7 @@ function courseSummary(course: {
     holeCount: course.holes.length,
     totalPar,
     totalDistanceMeters: Math.round(totalDistanceMeters),
+    firstTee: firstTee ? { lat: firstTee.teeLat, lng: firstTee.teeLng } : null,
   };
 }
 
@@ -118,4 +127,18 @@ coursesRouter.get("/:id", async (req, res) => {
   }));
 
   res.json({ ...courseSummary(course), holes });
+});
+
+// Delete a course. Only its creator may delete it.
+coursesRouter.delete("/:id", requireAuth, async (req: AuthedRequest, res) => {
+  const course = await prisma.course.findUnique({ where: { id: req.params.id } });
+  if (!course) {
+    return res.status(404).json({ error: "Course not found" });
+  }
+  if (course.creatorId !== req.user!.userId) {
+    return res.status(403).json({ error: "Only the course creator can delete this course" });
+  }
+
+  await prisma.course.delete({ where: { id: course.id } });
+  res.status(204).send();
 });
