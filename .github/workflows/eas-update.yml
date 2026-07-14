@@ -1,0 +1,56 @@
+name: Publish EAS Update
+
+on:
+  push:
+    branches: [claude/campus-golf-mapper-c8uonc]
+    paths: ["mobile/**"]
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install mobile dependencies
+        working-directory: mobile
+        run: npm ci
+
+      - name: Link EAS project (first run only)
+        working-directory: mobile
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          if ! grep -q '"projectId"' app.json; then
+            npx --yes eas-cli@latest init --non-interactive
+          else
+            echo "EAS project already linked, skipping init."
+          fi
+
+      - name: Commit EAS project id if it changed
+        run: |
+          if ! git diff --quiet -- mobile/app.json; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add mobile/app.json
+            git commit -m "Link EAS project [skip ci]"
+            git push
+          fi
+
+      - name: Publish update
+        working-directory: mobile
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          EXPO_PUBLIC_API_URL: ${{ vars.EXPO_PUBLIC_API_URL }}
+        run: |
+          npx --yes eas-cli@latest update \
+            --branch preview \
+            --message "${{ github.event.head_commit.message || 'Manual publish' }}" \
+            --non-interactive
