@@ -14,7 +14,7 @@ import {
 } from "react-native";
 import { api, ApiError, CourseSummary, LatLng } from "../api";
 import { AppStackParamList, MainTabParamList } from "../navigation/types";
-import { colors, spacing } from "../theme";
+import { colors, fonts, radii, spacing } from "../theme";
 import { formatDistance, formatHoleCount } from "../utils/format";
 import { distanceMeters } from "../utils/geo";
 import { getCurrentLatLng } from "../utils/location";
@@ -124,23 +124,29 @@ export function CourseListScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.sky },
   header: { padding: spacing.lg, paddingBottom: spacing.sm },
-  title: { fontSize: 28, fontWeight: "800", color: colors.fairwayDark },
-  subtitle: { fontSize: 13, color: colors.muted, marginTop: 2 },
-  error: { color: colors.danger, textAlign: "center", marginTop: spacing.lg },
+  title: { fontSize: 30, fontFamily: fonts.displayBlack, color: colors.fairwayDark },
+  subtitle: { fontSize: 13, fontFamily: fonts.serifItalic, color: colors.muted, marginTop: 2 },
+  error: { color: colors.danger, fontFamily: fonts.serif, textAlign: "center", marginTop: spacing.lg },
   list: { padding: spacing.md, gap: spacing.md },
-  empty: { color: colors.muted, textAlign: "center", marginTop: spacing.xl, paddingHorizontal: spacing.lg },
+  empty: {
+    color: colors.muted,
+    fontFamily: fonts.serif,
+    textAlign: "center",
+    marginTop: spacing.xl,
+    paddingHorizontal: spacing.lg,
+  },
   card: {
     backgroundColor: colors.card,
-    borderRadius: 14,
+    borderRadius: radii.md,
     padding: spacing.md,
     borderWidth: 1,
     borderColor: colors.border,
   },
   cardHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" },
-  cardTitle: { fontSize: 18, fontWeight: "700", color: colors.ink, flex: 1 },
-  cardDistance: { fontSize: 13, fontWeight: "700", color: colors.fairway, marginLeft: spacing.sm },
-  cardLocation: { fontSize: 13, color: colors.muted, marginTop: 2 },
+  cardTitle: { fontSize: 19, fontFamily: fonts.display, color: colors.ink, flex: 1 },
+  cardDistance: { fontSize: 13, fontFamily: fonts.serifBold, color: colors.fairway, marginLeft: spacing.sm },
+  cardLocation: { fontSize: 13, fontFamily: fonts.serifItalic, color: colors.muted, marginTop: 2 },
   cardMetaRow: { flexDirection: "row", gap: spacing.md, marginTop: spacing.sm },
-  cardMeta: { fontSize: 13, color: colors.fairway, fontWeight: "600" },
-  cardCreator: { fontSize: 12, color: colors.muted, marginTop: spacing.xs },
+  cardMeta: { fontSize: 13, fontFamily: fonts.serifBold, color: colors.fairway },
+  cardCreator: { fontSize: 12, fontFamily: fonts.serif, color: colors.muted, marginTop: spacing.xs },
 });

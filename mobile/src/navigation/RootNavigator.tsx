@@ -11,7 +11,7 @@ export function RootNavigator() {
   if (isLoading) {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.sky }}>
-        <ActivityIndicator />
+        <ActivityIndicator color={colors.fairway} />
       </View>
     );
   }

@@ -5,7 +5,7 @@ import { api, ApiError, NewHoleInput } from "../api";
 import { HoleCaptureForm } from "../components/HoleCaptureForm";
 import { useAuth } from "../context/AuthContext";
 import { AppStackParamList } from "../navigation/types";
-import { colors, spacing } from "../theme";
+import { colors, fonts, spacing } from "../theme";
 
 type Props = NativeStackScreenProps<AppStackParamList, "AddHole">;
 
@@ -48,7 +48,7 @@ export function AddHoleScreen({ route, navigation }: Props) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.sky },
   scroll: { padding: spacing.lg, gap: spacing.md },
-  title: { fontSize: 26, fontWeight: "800", color: colors.fairwayDark },
-  subtitle: { fontSize: 13, color: colors.muted },
-  error: { color: colors.danger, textAlign: "center" },
+  title: { fontSize: 27, fontFamily: fonts.displayBlack, color: colors.fairwayDark },
+  subtitle: { fontSize: 13, fontFamily: fonts.serifItalic, color: colors.muted },
+  error: { color: colors.danger, fontFamily: fonts.serif, textAlign: "center" },
 });

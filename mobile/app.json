@@ -17,7 +17,7 @@
     "android": {
       "package": "com.campusgolf.app",
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#F7F3E6",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
@@ -33,6 +33,14 @@
         "expo-location",
         {
           "locationWhenInUsePermission": "Campus Golf uses your location to record tee and hole positions while you build a course, and to track your position while you play."
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#F7F3E6",
+          "image": "./assets/icon.png",
+          "imageWidth": 120
         }
       ]
     ]

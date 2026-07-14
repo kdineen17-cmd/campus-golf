@@ -5,7 +5,7 @@ import { ApiError } from "../api";
 import { Button } from "../components/Button";
 import { useAuth } from "../context/AuthContext";
 import { AuthStackParamList } from "../navigation/types";
-import { colors, spacing } from "../theme";
+import { colors, fonts, radii, spacing } from "../theme";
 
 type Props = NativeStackScreenProps<AuthStackParamList, "Login">;
 
@@ -34,7 +34,9 @@ export function LoginScreen({ navigation }: Props) {
       style={styles.container}
     >
       <View style={styles.header}>
-        <Text style={styles.title}>⛳ Campus Golf</Text>
+        <Text style={styles.eyebrow}>ESTABLISHED FOR THE PUBLIC PARK</Text>
+        <Text style={styles.title}>Campus Golf</Text>
+        <View style={styles.rule} />
         <Text style={styles.subtitle}>Play the park. Chase the course record.</Text>
       </View>
 
@@ -42,6 +44,7 @@ export function LoginScreen({ navigation }: Props) {
         <TextInput
           style={styles.input}
           placeholder="Username or email"
+          placeholderTextColor={colors.muted}
           autoCapitalize="none"
           autoCorrect={false}
           value={usernameOrEmail}
@@ -50,6 +53,7 @@ export function LoginScreen({ navigation }: Props) {
         <TextInput
           style={styles.input}
           placeholder="Password"
+          placeholderTextColor={colors.muted}
           secureTextEntry
           value={password}
           onChangeText={setPassword}
@@ -70,17 +74,27 @@ export function LoginScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.sky, justifyContent: "center", padding: spacing.lg },
   header: { alignItems: "center", marginBottom: spacing.xl },
-  title: { fontSize: 32, fontWeight: "800", color: colors.fairwayDark },
-  subtitle: { fontSize: 15, color: colors.muted, marginTop: spacing.xs },
+  eyebrow: {
+    fontSize: 11,
+    fontFamily: fonts.serifBold,
+    color: colors.gold,
+    letterSpacing: 2,
+    marginBottom: spacing.xs,
+  },
+  title: { fontSize: 40, fontFamily: fonts.displayBlack, color: colors.fairwayDark },
+  rule: { width: 64, height: 2, backgroundColor: colors.gold, marginTop: spacing.sm, marginBottom: spacing.sm },
+  subtitle: { fontSize: 15, fontFamily: fonts.serifItalic, color: colors.muted },
   form: { gap: spacing.md },
   input: {
     backgroundColor: colors.card,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 12,
+    borderRadius: radii.sm,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.md,
     fontSize: 16,
+    fontFamily: fonts.serif,
+    color: colors.ink,
   },
-  error: { color: colors.danger, textAlign: "center" },
+  error: { color: colors.danger, textAlign: "center", fontFamily: fonts.serif },
 });

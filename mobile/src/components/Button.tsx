@@ -1,5 +1,5 @@
 import { ActivityIndicator, Pressable, StyleSheet, Text } from "react-native";
-import { colors, spacing } from "../theme";
+import { colors, fonts, radii, spacing } from "../theme";
 
 interface Props {
   title: string;
@@ -25,12 +25,13 @@ export function Button({ title, onPress, variant = "primary", disabled, loading 
       ]}
     >
       {loading ? (
-        <ActivityIndicator color={variant === "secondary" ? colors.fairway : "#fff"} />
+        <ActivityIndicator color={variant === "secondary" ? colors.fairway : colors.sky} />
       ) : (
         <Text
           style={[
             styles.text,
             variant === "secondary" && styles.secondaryText,
+            variant === "danger" && styles.dangerText,
           ]}
         >
           {title}
@@ -42,17 +43,26 @@ export function Button({ title, onPress, variant = "primary", disabled, loading 
 
 const styles = StyleSheet.create({
   base: {
-    borderRadius: 12,
+    borderRadius: radii.sm,
+    borderWidth: 1,
+    borderColor: "transparent",
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.lg,
     alignItems: "center",
     justifyContent: "center",
   },
   primary: { backgroundColor: colors.fairway },
-  secondary: { backgroundColor: "transparent", borderWidth: 1.5, borderColor: colors.fairway },
-  danger: { backgroundColor: colors.danger },
-  disabled: { opacity: 0.5 },
-  pressed: { opacity: 0.85 },
-  text: { color: "#fff", fontSize: 16, fontWeight: "600" },
-  secondaryText: { color: colors.fairway },
+  secondary: { backgroundColor: "transparent", borderWidth: 1, borderColor: colors.gold },
+  danger: { backgroundColor: "transparent", borderWidth: 1, borderColor: colors.danger },
+  disabled: { opacity: 0.45 },
+  pressed: { opacity: 0.8 },
+  text: {
+    color: colors.sky,
+    fontSize: 15,
+    fontFamily: fonts.serifBold,
+    letterSpacing: 1,
+    textTransform: "uppercase",
+  },
+  secondaryText: { color: colors.fairwayDark },
+  dangerText: { color: colors.danger },
 });

@@ -9,7 +9,7 @@ import { MapMarkerSpec } from "../components/HoleMapTypes";
 import { Stepper } from "../components/Stepper";
 import { useAuth } from "../context/AuthContext";
 import { AppStackParamList } from "../navigation/types";
-import { colors, spacing } from "../theme";
+import { colors, fonts, radii, spacing } from "../theme";
 import { formatDistance, formatDuration } from "../utils/format";
 import { distanceMeters } from "../utils/geo";
 import { ensureLocationPermission } from "../utils/location";
@@ -222,16 +222,16 @@ export function PlayScreen({ route, navigation }: Props) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.sky },
   center: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.sky },
-  error: { color: colors.danger, textAlign: "center", padding: spacing.md },
+  error: { color: colors.danger, fontFamily: fonts.serif, textAlign: "center", padding: spacing.md },
   map: { width: "100%", height: 260 },
   body: { padding: spacing.lg, gap: spacing.sm },
-  holeLabel: { fontSize: 13, color: colors.muted, fontWeight: "600" },
-  holeName: { fontSize: 24, fontWeight: "800", color: colors.fairwayDark },
-  holeMeta: { fontSize: 14, color: colors.muted },
-  liveDistance: { fontSize: 14, color: colors.fairway, fontWeight: "600" },
+  holeLabel: { fontSize: 12, fontFamily: fonts.serifBold, color: colors.gold, letterSpacing: 1.5 },
+  holeName: { fontSize: 26, fontFamily: fonts.displayBlack, color: colors.fairwayDark },
+  holeMeta: { fontSize: 14, fontFamily: fonts.serif, color: colors.muted },
+  liveDistance: { fontSize: 14, fontFamily: fonts.serifBold, color: colors.fairway },
   strokesCard: {
     backgroundColor: colors.card,
-    borderRadius: 14,
+    borderRadius: radii.md,
     borderWidth: 1,
     borderColor: colors.border,
     padding: spacing.md,
@@ -240,19 +240,26 @@ const styles = StyleSheet.create({
   navRow: { flexDirection: "row", gap: spacing.sm, marginTop: spacing.md },
   navButton: { flex: 1 },
   summaryContainer: { padding: spacing.lg, gap: spacing.sm, backgroundColor: colors.sky },
-  title: { fontSize: 26, fontWeight: "800", color: colors.fairwayDark },
-  courseName: { fontSize: 15, color: colors.muted, marginBottom: spacing.sm },
+  title: { fontSize: 27, fontFamily: fonts.displayBlack, color: colors.fairwayDark },
+  courseName: { fontSize: 15, fontFamily: fonts.serifItalic, color: colors.muted, marginBottom: spacing.sm },
   recordBanner: {
-    backgroundColor: "#FFF3CD",
-    borderRadius: 12,
+    backgroundColor: colors.fairwayDark,
+    borderRadius: radii.md,
+    borderWidth: 1,
+    borderColor: colors.gold,
     padding: spacing.md,
     alignItems: "center",
     marginBottom: spacing.sm,
   },
-  recordText: { fontSize: 16, fontWeight: "800", color: colors.gold },
+  recordText: {
+    fontSize: 16,
+    fontFamily: fonts.displayBlack,
+    color: colors.goldBright,
+    letterSpacing: 0.5,
+  },
   totalsRow: { alignItems: "center", marginVertical: spacing.md },
-  totalStrokes: { fontSize: 48, fontWeight: "800", color: colors.fairwayDark },
-  totalLabel: { fontSize: 14, color: colors.muted },
+  totalStrokes: { fontSize: 56, fontFamily: fonts.displayBlack, color: colors.fairwayDark },
+  totalLabel: { fontSize: 14, fontFamily: fonts.serif, color: colors.muted },
   scoreRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -261,8 +268,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
-  scoreHole: { width: 20, fontWeight: "700", color: colors.ink },
-  scoreName: { flex: 1, fontSize: 14, color: colors.ink },
-  scorePar: { fontSize: 12, color: colors.muted },
-  scoreStrokes: { fontSize: 16, fontWeight: "800", color: colors.fairway, width: 30, textAlign: "right" },
+  scoreHole: { width: 20, fontFamily: fonts.serifBold, color: colors.ink },
+  scoreName: { flex: 1, fontSize: 14, fontFamily: fonts.serif, color: colors.ink },
+  scorePar: { fontSize: 12, fontFamily: fonts.serif, color: colors.muted },
+  scoreStrokes: { fontSize: 17, fontFamily: fonts.displayBlack, color: colors.fairway, width: 32, textAlign: "right" },
 });

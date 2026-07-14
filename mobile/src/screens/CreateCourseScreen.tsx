@@ -17,7 +17,7 @@ import { Button } from "../components/Button";
 import { HoleCaptureForm } from "../components/HoleCaptureForm";
 import { useAuth } from "../context/AuthContext";
 import { AppStackParamList, MainTabParamList } from "../navigation/types";
-import { colors, spacing } from "../theme";
+import { colors, fonts, radii, spacing } from "../theme";
 import { formatDistance } from "../utils/format";
 import { distanceMeters } from "../utils/geo";
 
@@ -91,18 +91,21 @@ export function CreateCourseScreen({ navigation }: Props) {
         <TextInput
           style={styles.input}
           placeholder="Course name (e.g. Riverside Park 9)"
+          placeholderTextColor={colors.muted}
           value={name}
           onChangeText={setName}
         />
         <TextInput
           style={styles.input}
           placeholder="Location (e.g. Riverside Park)"
+          placeholderTextColor={colors.muted}
           value={location}
           onChangeText={setLocation}
         />
         <TextInput
           style={[styles.input, styles.multiline]}
           placeholder="Description (optional)"
+          placeholderTextColor={colors.muted}
           value={description}
           onChangeText={setDescription}
           multiline
@@ -146,27 +149,29 @@ export function CreateCourseScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.sky },
   scroll: { padding: spacing.lg, gap: spacing.md, paddingBottom: spacing.xl * 2 },
-  title: { fontSize: 26, fontWeight: "800", color: colors.fairwayDark },
-  subtitle: { fontSize: 13, color: colors.muted },
+  title: { fontSize: 27, fontFamily: fonts.displayBlack, color: colors.fairwayDark },
+  subtitle: { fontSize: 13, fontFamily: fonts.serifItalic, color: colors.muted },
   input: {
     backgroundColor: colors.card,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 12,
+    borderRadius: radii.sm,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.md,
     fontSize: 15,
+    fontFamily: fonts.serif,
+    color: colors.ink,
   },
   multiline: { minHeight: 70, textAlignVertical: "top" },
-  error: { color: colors.danger, textAlign: "center" },
-  sectionTitle: { fontSize: 16, fontWeight: "700", color: colors.ink, marginBottom: spacing.xs },
+  error: { color: colors.danger, fontFamily: fonts.serif, textAlign: "center" },
+  sectionTitle: { fontSize: 16, fontFamily: fonts.serifBold, color: colors.ink, marginBottom: spacing.xs },
   holesList: { gap: spacing.xs },
   holeRow: {
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.sm,
     backgroundColor: colors.card,
-    borderRadius: 10,
+    borderRadius: radii.sm,
     padding: spacing.sm,
     borderWidth: 1,
     borderColor: colors.border,
@@ -174,16 +179,16 @@ const styles = StyleSheet.create({
   holeIndex: {
     width: 24,
     height: 24,
-    borderRadius: 12,
+    borderRadius: radii.sm,
     backgroundColor: colors.fairway,
-    color: "#fff",
+    color: colors.sky,
     textAlign: "center",
     lineHeight: 24,
-    fontWeight: "700",
+    fontFamily: fonts.serifBold,
     fontSize: 12,
     overflow: "hidden",
   },
-  holeName: { fontSize: 14, fontWeight: "600", color: colors.ink },
-  holeMeta: { fontSize: 12, color: colors.muted },
-  remove: { color: colors.danger, fontSize: 12, fontWeight: "600" },
+  holeName: { fontSize: 14, fontFamily: fonts.serifBold, color: colors.ink },
+  holeMeta: { fontSize: 12, fontFamily: fonts.serif, color: colors.muted },
+  remove: { color: colors.danger, fontFamily: fonts.serifBold, fontSize: 12 },
 });

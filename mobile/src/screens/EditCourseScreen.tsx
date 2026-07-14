@@ -14,7 +14,7 @@ import { api, ApiError } from "../api";
 import { Button } from "../components/Button";
 import { useAuth } from "../context/AuthContext";
 import { AppStackParamList } from "../navigation/types";
-import { colors, spacing } from "../theme";
+import { colors, fonts, radii, spacing } from "../theme";
 
 type Props = NativeStackScreenProps<AppStackParamList, "EditCourse">;
 
@@ -77,11 +77,24 @@ export function EditCourseScreen({ route, navigation }: Props) {
       <ScrollView contentContainerStyle={styles.scroll}>
         <Text style={styles.title}>Edit course details</Text>
 
-        <TextInput style={styles.input} placeholder="Course name" value={name} onChangeText={setName} />
-        <TextInput style={styles.input} placeholder="Location" value={location} onChangeText={setLocation} />
+        <TextInput
+          style={styles.input}
+          placeholder="Course name"
+          placeholderTextColor={colors.muted}
+          value={name}
+          onChangeText={setName}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Location"
+          placeholderTextColor={colors.muted}
+          value={location}
+          onChangeText={setLocation}
+        />
         <TextInput
           style={[styles.input, styles.multiline]}
           placeholder="Description (optional)"
+          placeholderTextColor={colors.muted}
           value={description}
           onChangeText={setDescription}
           multiline
@@ -99,16 +112,18 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.sky },
   center: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.sky },
   scroll: { padding: spacing.lg, gap: spacing.md },
-  title: { fontSize: 26, fontWeight: "800", color: colors.fairwayDark },
+  title: { fontSize: 27, fontFamily: fonts.displayBlack, color: colors.fairwayDark },
   input: {
     backgroundColor: colors.card,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 12,
+    borderRadius: radii.sm,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.md,
     fontSize: 15,
+    fontFamily: fonts.serif,
+    color: colors.ink,
   },
   multiline: { minHeight: 70, textAlignVertical: "top" },
-  error: { color: colors.danger, textAlign: "center" },
+  error: { color: colors.danger, fontFamily: fonts.serif, textAlign: "center" },
 });

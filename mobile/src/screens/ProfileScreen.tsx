@@ -7,7 +7,7 @@ import { api, ApiError, RoundHistoryEntry } from "../api";
 import { Button } from "../components/Button";
 import { useAuth } from "../context/AuthContext";
 import { AppStackParamList, MainTabParamList } from "../navigation/types";
-import { colors, spacing } from "../theme";
+import { colors, fonts, radii, spacing } from "../theme";
 import { formatDuration } from "../utils/format";
 
 type Props = CompositeScreenProps<
@@ -98,27 +98,33 @@ export function ProfileScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.sky },
   header: { padding: spacing.lg, paddingBottom: spacing.sm },
-  title: { fontSize: 28, fontWeight: "800", color: colors.fairwayDark },
+  title: { fontSize: 30, fontFamily: fonts.displayBlack, color: colors.fairwayDark },
   statsRow: { flexDirection: "row", gap: spacing.xl, marginTop: spacing.md },
   statBlock: { alignItems: "flex-start" },
-  statValue: { fontSize: 24, fontWeight: "800", color: colors.fairway },
-  statLabel: { fontSize: 12, color: colors.muted },
-  error: { color: colors.danger, textAlign: "center", marginTop: spacing.lg },
+  statValue: { fontSize: 26, fontFamily: fonts.display, color: colors.fairway },
+  statLabel: { fontSize: 11, fontFamily: fonts.serifBold, color: colors.muted, letterSpacing: 1, textTransform: "uppercase" },
+  error: { color: colors.danger, fontFamily: fonts.serif, textAlign: "center", marginTop: spacing.lg },
   list: { paddingHorizontal: spacing.md, gap: spacing.sm },
-  empty: { color: colors.muted, textAlign: "center", marginTop: spacing.xl, paddingHorizontal: spacing.lg },
+  empty: {
+    color: colors.muted,
+    fontFamily: fonts.serifItalic,
+    textAlign: "center",
+    marginTop: spacing.xl,
+    paddingHorizontal: spacing.lg,
+  },
   row: {
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.sm,
     backgroundColor: colors.card,
-    borderRadius: 12,
+    borderRadius: radii.md,
     borderWidth: 1,
     borderColor: colors.border,
     padding: spacing.md,
   },
-  courseName: { fontSize: 15, fontWeight: "600", color: colors.ink },
-  meta: { fontSize: 12, color: colors.muted, marginTop: 2 },
-  strokes: { fontSize: 18, fontWeight: "800", color: colors.fairway, width: 32, textAlign: "right" },
-  relative: { fontSize: 12, color: colors.muted, width: 28, textAlign: "right" },
+  courseName: { fontSize: 15, fontFamily: fonts.serifBold, color: colors.ink },
+  meta: { fontSize: 12, fontFamily: fonts.serif, color: colors.muted, marginTop: 2 },
+  strokes: { fontSize: 19, fontFamily: fonts.displayBlack, color: colors.fairway, width: 32, textAlign: "right" },
+  relative: { fontSize: 12, fontFamily: fonts.serif, color: colors.muted, width: 28, textAlign: "right" },
   footer: { padding: spacing.lg, gap: spacing.sm },
 });

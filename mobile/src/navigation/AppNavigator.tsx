@@ -4,7 +4,7 @@ import { CourseDetailScreen } from "../screens/CourseDetailScreen";
 import { EditCourseScreen } from "../screens/EditCourseScreen";
 import { PlayScreen } from "../screens/PlayScreen";
 import { RulesScreen } from "../screens/RulesScreen";
-import { colors } from "../theme";
+import { colors, fonts } from "../theme";
 import { MainTabNavigator } from "./MainTabNavigator";
 import { AppStackParamList } from "./types";
 
@@ -17,6 +17,8 @@ export function AppNavigator() {
         headerTintColor: colors.fairwayDark,
         headerStyle: { backgroundColor: colors.sky },
         headerShadowVisible: false,
+        headerTitleStyle: { fontFamily: fonts.display, fontSize: 18 },
+        headerBackTitleStyle: { fontFamily: fonts.serif },
       }}
     >
       <Stack.Screen name="MainTabs" component={MainTabNavigator} options={{ headerShown: false }} />

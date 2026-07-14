@@ -3,7 +3,7 @@ import { Text } from "react-native";
 import { CourseListScreen } from "../screens/CourseListScreen";
 import { CreateCourseScreen } from "../screens/CreateCourseScreen";
 import { ProfileScreen } from "../screens/ProfileScreen";
-import { colors } from "../theme";
+import { colors, fonts } from "../theme";
 import { MainTabParamList } from "./types";
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
@@ -15,6 +15,8 @@ export function MainTabNavigator() {
         headerShown: false,
         tabBarActiveTintColor: colors.fairway,
         tabBarInactiveTintColor: colors.muted,
+        tabBarStyle: { backgroundColor: colors.card, borderTopColor: colors.border },
+        tabBarLabelStyle: { fontFamily: fonts.serifBold, fontSize: 11 },
       }}
     >
       <Tab.Screen

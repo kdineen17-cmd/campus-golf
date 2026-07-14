@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
 import { LatLng, NewHoleInput } from "../api";
-import { colors, spacing } from "../theme";
+import { colors, fonts, radii, spacing } from "../theme";
 import { formatDistance } from "../utils/format";
 import { distanceMeters } from "../utils/geo";
 import { getCurrentLatLng, LocationPermissionError } from "../utils/location";
@@ -82,6 +82,7 @@ export function HoleCaptureForm({ title, submitLabel, onSubmit, submitting }: Pr
       <TextInput
         style={styles.input}
         placeholder="Landmark name (e.g. The Old Oak)"
+        placeholderTextColor={colors.muted}
         value={draftName}
         onChangeText={setDraftName}
       />
@@ -95,24 +96,26 @@ export function HoleCaptureForm({ title, submitLabel, onSubmit, submitting }: Pr
 const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.card,
-    borderRadius: 14,
+    borderRadius: radii.md,
     borderWidth: 1,
     borderColor: colors.border,
     padding: spacing.md,
     gap: spacing.md,
   },
-  cardTitle: { fontSize: 17, fontWeight: "700", color: colors.ink },
+  cardTitle: { fontSize: 17, fontFamily: fonts.display, color: colors.ink },
   captureRow: { flexDirection: "row", gap: spacing.sm },
   captureButton: { flex: 1 },
-  captureDistance: { fontSize: 13, color: colors.fairway, fontWeight: "600" },
-  error: { color: colors.danger, textAlign: "center" },
+  captureDistance: { fontSize: 13, fontFamily: fonts.serifBold, color: colors.fairway },
+  error: { color: colors.danger, fontFamily: fonts.serif, textAlign: "center" },
   input: {
     backgroundColor: colors.sky,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 12,
+    borderRadius: radii.sm,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.md,
     fontSize: 15,
+    fontFamily: fonts.serif,
+    color: colors.ink,
   },
 });

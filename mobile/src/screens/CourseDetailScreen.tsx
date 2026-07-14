@@ -8,7 +8,7 @@ import { HoleMap } from "../components/HoleMap";
 import { MapMarkerSpec, MapPolylineSpec } from "../components/HoleMapTypes";
 import { useAuth } from "../context/AuthContext";
 import { AppStackParamList } from "../navigation/types";
-import { colors, spacing } from "../theme";
+import { colors, fonts, radii, spacing } from "../theme";
 import { formatDistance, formatDuration, formatHoleCount } from "../utils/format";
 import { regionForPoints } from "../utils/region";
 
@@ -168,16 +168,21 @@ export function CourseDetailScreen({ route, navigation }: Props) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.sky },
   center: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.sky },
-  error: { color: colors.danger, padding: spacing.lg, textAlign: "center" },
+  error: { color: colors.danger, fontFamily: fonts.serif, padding: spacing.lg, textAlign: "center" },
   map: { width: "100%", height: 260 },
   body: { padding: spacing.lg, gap: spacing.sm },
-  title: { fontSize: 26, fontWeight: "800", color: colors.fairwayDark },
-  location: { fontSize: 14, color: colors.muted },
-  description: { fontSize: 14, color: colors.ink, marginTop: spacing.xs },
+  title: { fontSize: 27, fontFamily: fonts.displayBlack, color: colors.fairwayDark },
+  location: { fontSize: 14, fontFamily: fonts.serifItalic, color: colors.muted },
+  description: { fontSize: 14, fontFamily: fonts.serif, color: colors.ink, marginTop: spacing.xs },
   metaRow: { flexDirection: "row", gap: spacing.md, marginTop: spacing.sm },
-  metaItem: { fontSize: 14, fontWeight: "600", color: colors.fairway },
-  creator: { fontSize: 12, color: colors.muted, marginBottom: spacing.sm },
-  sectionTitle: { fontSize: 18, fontWeight: "700", color: colors.ink, marginTop: spacing.lg },
+  metaItem: { fontSize: 14, fontFamily: fonts.serifBold, color: colors.fairway },
+  creator: { fontSize: 12, fontFamily: fonts.serif, color: colors.muted, marginBottom: spacing.sm },
+  sectionTitle: {
+    fontSize: 18,
+    fontFamily: fonts.display,
+    color: colors.ink,
+    marginTop: spacing.lg,
+  },
   holeRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -189,17 +194,17 @@ const styles = StyleSheet.create({
   holeIndex: {
     width: 28,
     height: 28,
-    borderRadius: 14,
+    borderRadius: radii.sm,
     backgroundColor: colors.fairway,
-    color: "#fff",
+    color: colors.sky,
     textAlign: "center",
     lineHeight: 28,
-    fontWeight: "700",
+    fontFamily: fonts.serifBold,
     overflow: "hidden",
   },
-  holeName: { fontSize: 15, fontWeight: "600", color: colors.ink },
-  holeMeta: { fontSize: 12, color: colors.muted },
-  empty: { color: colors.muted, fontSize: 13 },
+  holeName: { fontSize: 15, fontFamily: fonts.serifBold, color: colors.ink },
+  holeMeta: { fontSize: 12, fontFamily: fonts.serif, color: colors.muted },
+  empty: { color: colors.muted, fontFamily: fonts.serifItalic, fontSize: 13 },
   leaderRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -208,9 +213,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
-  leaderRank: { width: 20, fontWeight: "700", color: colors.gold },
-  leaderName: { flex: 1, fontSize: 15, fontWeight: "600", color: colors.ink },
-  leaderStrokes: { fontSize: 13, color: colors.fairway, fontWeight: "600" },
-  leaderDuration: { fontSize: 12, color: colors.muted, marginLeft: spacing.sm },
+  leaderRank: { width: 20, fontFamily: fonts.serifBold, color: colors.gold },
+  leaderName: { flex: 1, fontSize: 15, fontFamily: fonts.serifBold, color: colors.ink },
+  leaderStrokes: { fontSize: 13, fontFamily: fonts.serifBold, color: colors.fairway },
+  leaderDuration: { fontSize: 12, fontFamily: fonts.serif, color: colors.muted, marginLeft: spacing.sm },
   creatorTools: { marginTop: spacing.xl, gap: spacing.sm },
 });
