@@ -1,25 +1,13 @@
 import { execSync } from "node:child_process";
-import { existsSync, rmSync } from "node:fs";
 import path from "node:path";
 
-const TEST_DB_PATH = path.join(__dirname, "../prisma/test.db");
+const TEST_DATABASE_URL =
+  process.env.TEST_DATABASE_URL ?? "postgresql://postgres:postgres@localhost:5432/campus_golf_test";
 
 export async function setup() {
-  for (const suffix of ["", "-journal"]) {
-    const file = TEST_DB_PATH + suffix;
-    if (existsSync(file)) rmSync(file);
-  }
-
-  execSync("npx prisma db push --skip-generate", {
+  execSync("npx prisma db push --skip-generate --force-reset --accept-data-loss", {
     cwd: path.join(__dirname, ".."),
-    env: { ...process.env, DATABASE_URL: "file:./test.db" },
+    env: { ...process.env, DATABASE_URL: TEST_DATABASE_URL, DIRECT_URL: TEST_DATABASE_URL },
     stdio: "inherit",
   });
-}
-
-export async function teardown() {
-  for (const suffix of ["", "-journal"]) {
-    const file = TEST_DB_PATH + suffix;
-    if (existsSync(file)) rmSync(file);
-  }
 }
