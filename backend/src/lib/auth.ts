@@ -19,12 +19,18 @@ export function requireAuth(req: AuthedRequest, res: Response, next: NextFunctio
   const header = req.headers.authorization;
   const token = header?.startsWith("Bearer ") ? header.slice(7) : undefined;
   if (!token) {
+    console.warn(
+      `[auth] ${req.method} ${req.path} missing/malformed Authorization header (present: ${!!header})`
+    );
     return res.status(401).json({ error: "Missing Authorization header" });
   }
   try {
     req.user = jwt.verify(token, JWT_SECRET) as AuthPayload;
     next();
-  } catch {
+  } catch (err) {
+    console.warn(
+      `[auth] ${req.method} ${req.path} jwt.verify failed: ${err instanceof Error ? err.name + ": " + err.message : err} (secretLen=${JWT_SECRET.length}, tokenLen=${token.length})`
+    );
     return res.status(401).json({ error: "Invalid or expired token" });
   }
 }
