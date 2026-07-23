@@ -25,7 +25,7 @@ const createCourseSchema = z.object({
   holes: z.array(holeSchema).min(1).max(36),
 });
 
-interface HoleRow {
+export interface HoleRow {
   id: string;
   index: number;
   name: string | null;
@@ -36,7 +36,7 @@ interface HoleRow {
   holeLng: number;
 }
 
-interface CourseRow {
+export interface CourseRow {
   id: string;
   name: string;
   description: string | null;
@@ -46,7 +46,7 @@ interface CourseRow {
   holes: HoleRow[];
 }
 
-function courseSummary(course: CourseRow) {
+export function courseSummary(course: CourseRow) {
   const totalPar = course.holes.reduce((sum, h) => sum + h.par, 0);
   const totalDistanceMeters = course.holes.reduce(
     (sum, h) => sum + haversineMeters(h.teeLat, h.teeLng, h.holeLat, h.holeLng),

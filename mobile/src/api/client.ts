@@ -1,3 +1,5 @@
+import { notifyUnauthorized } from "./authEvents";
+
 const API_URL = process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:3000";
 
 export class ApiError extends Error {
@@ -41,6 +43,9 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
 
   if (!response.ok) {
     const message = data && typeof data.error === "string" ? data.error : `Request failed (${response.status})`;
+    if (response.status === 401 && options.token) {
+      notifyUnauthorized();
+    }
     throw new ApiError(message, response.status);
   }
 
