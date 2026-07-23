@@ -2,11 +2,18 @@
   "expo": {
     "name": "Campus Golf",
     "slug": "campus-golf",
+    "owner": "kdineen17s-team",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "scheme": "campusgolf",
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/2473d317-40f7-4490-ad92-4b3163d83c74"
+    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.campusgolf.app",
@@ -43,6 +50,11 @@
           "imageWidth": 120
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "2473d317-40f7-4490-ad92-4b3163d83c74"
+      }
+    }
   }
 }

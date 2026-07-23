@@ -1,8 +1,22 @@
 import { Router } from "express";
 import { prisma } from "../lib/prisma";
 import { AuthedRequest, requireAuth } from "../lib/auth";
+import { courseSummary } from "./courses";
 
 export const usersRouter = Router();
+
+// Courses created by the signed-in user, most recent first.
+usersRouter.get("/me/courses", requireAuth, async (req: AuthedRequest, res) => {
+  const userId = req.user!.userId;
+
+  const courses = await prisma.course.findMany({
+    where: { creatorId: userId },
+    orderBy: { createdAt: "desc" },
+    include: { creator: { select: { id: true, username: true } }, holes: true },
+  });
+
+  res.json(courses.map(courseSummary));
+});
 
 // The signed-in user's round history, most recent first.
 usersRouter.get("/me/rounds", requireAuth, async (req: AuthedRequest, res) => {

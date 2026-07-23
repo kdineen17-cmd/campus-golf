@@ -54,6 +54,10 @@ export const api = {
     return apiRequest<RoundHistoryEntry[]>("/users/me/rounds", { token });
   },
 
+  getMyCourses(token: string) {
+    return apiRequest<CourseSummary[]>("/users/me/courses", { token });
+  },
+
   getLeaderboard(courseId: string) {
     return apiRequest<LeaderboardEntry[]>(`/courses/${courseId}/rounds/leaderboard`);
   },

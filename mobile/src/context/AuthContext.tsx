@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { api, UserSummary } from "../api";
+import { setUnauthorizedHandler } from "../api/authEvents";
 
 const TOKEN_KEY = "campus-golf/token";
 const USER_KEY = "campus-golf/user";
@@ -35,6 +36,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     })();
   }, []);
 
+  async function clearSession() {
+    await AsyncStorage.multiRemove([TOKEN_KEY, USER_KEY]);
+    setToken(null);
+    setUser(null);
+  }
+
+  // Any API call that gets a 401 for a request that carried a token calls
+  // this, so an expired/invalid session bounces cleanly back to login
+  // instead of leaving screens stuck on a dead-end auth error.
+  useEffect(() => {
+    setUnauthorizedHandler(() => {
+      clearSession();
+    });
+    return () => setUnauthorizedHandler(null);
+  }, []);
+
   async function persist(nextToken: string, nextUser: UserSummary) {
     await Promise.all([
       AsyncStorage.setItem(TOKEN_KEY, nextToken),
@@ -57,11 +74,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const res = await api.register(username, email, password);
         await persist(res.token, res.user);
       },
-      async logout() {
-        await Promise.all([AsyncStorage.removeItem(TOKEN_KEY), AsyncStorage.removeItem(USER_KEY)]);
-        setToken(null);
-        setUser(null);
-      },
+      logout: clearSession,
     }),
     [token, user, isLoading]
   );

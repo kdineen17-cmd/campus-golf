@@ -30,3 +30,24 @@ describe("round history", () => {
     expect(res.body.every((r: { totalStrokes: number }) => r.totalStrokes === 8)).toBe(true);
   });
 });
+
+describe("my courses", () => {
+  it("rejects fetching my courses without auth", async () => {
+    const res = await request(app).get("/users/me/courses");
+    expect(res.status).toBe(401);
+  });
+
+  it("returns only courses created by the signed-in user", async () => {
+    const { token } = await registerUser();
+    const other = await registerUser();
+
+    await createCourse(token, { name: "Mine A" });
+    await createCourse(token, { name: "Mine B" });
+    await createCourse(other.token, { name: "Not Mine" });
+
+    const res = await request(app).get("/users/me/courses").set("Authorization", `Bearer ${token}`);
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveLength(2);
+    expect(res.body.map((c: { name: string }) => c.name).sort()).toEqual(["Mine A", "Mine B"]);
+  });
+});
