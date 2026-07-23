@@ -49,8 +49,13 @@ jobs:
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
           EXPO_PUBLIC_API_URL: ${{ vars.EXPO_PUBLIC_API_URL }}
+          FULL_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
         run: |
+          # Passed via env var (not spliced into the script) so quotes/newlines
+          # in the commit message can't break shell parsing. Just the first
+          # line, since EAS update messages are meant to be short summaries.
+          UPDATE_MESSAGE=$(printf '%s' "${FULL_COMMIT_MESSAGE:-Manual publish}" | head -1)
           npx --yes eas-cli@latest update \
             --branch preview \
-            --message "${{ github.event.head_commit.message || 'Manual publish' }}" \
+            --message "$UPDATE_MESSAGE" \
             --non-interactive
