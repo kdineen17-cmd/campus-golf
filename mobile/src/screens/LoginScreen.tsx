@@ -3,6 +3,7 @@ import { useState } from "react";
 import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, View } from "react-native";
 import { ApiError } from "../api";
 import { Button } from "../components/Button";
+import { BUILD_MARKER } from "../buildInfo";
 import { useAuth } from "../context/AuthContext";
 import { AuthStackParamList } from "../navigation/types";
 import { colors, fonts, radii, spacing } from "../theme";
@@ -67,6 +68,8 @@ export function LoginScreen({ navigation }: Props) {
         />
         <Button title="Create an account" variant="secondary" onPress={() => navigation.navigate("Register")} />
       </View>
+
+      <Text style={styles.buildMarker}>build {BUILD_MARKER}</Text>
     </KeyboardAvoidingView>
   );
 }
@@ -97,4 +100,12 @@ const styles = StyleSheet.create({
     color: colors.ink,
   },
   error: { color: colors.danger, textAlign: "center", fontFamily: fonts.serif },
+  buildMarker: {
+    position: "absolute",
+    bottom: spacing.md,
+    alignSelf: "center",
+    fontSize: 10,
+    fontFamily: fonts.serif,
+    color: colors.border,
+  },
 });
