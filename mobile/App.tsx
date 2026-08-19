@@ -8,7 +8,7 @@ import { PTSerif_400Regular, PTSerif_400Regular_Italic, PTSerif_700Bold } from "
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { AuthProvider } from "./src/context/AuthContext";
@@ -17,7 +17,7 @@ import { RootNavigator } from "./src/navigation/RootNavigator";
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
 export default function App() {
-  const [fontsLoaded] = useFonts({
+  const [fontsLoaded, fontError] = useFonts({
     PlayfairDisplay_600SemiBold,
     PlayfairDisplay_600SemiBold_Italic,
     PlayfairDisplay_700Bold,
@@ -27,13 +27,24 @@ export default function App() {
     PTSerif_700Bold,
   });
 
+  // Custom fonts are a nice-to-have, not a requirement — text falls back to
+  // the system font cleanly if a family isn't registered. Never let a slow
+  // or failed font fetch block the app behind an infinite splash screen.
+  const [timedOut, setTimedOut] = useState(false);
   useEffect(() => {
-    if (fontsLoaded) {
+    const timer = setTimeout(() => setTimedOut(true), 6000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const ready = fontsLoaded || !!fontError || timedOut;
+
+  useEffect(() => {
+    if (ready) {
       SplashScreen.hideAsync().catch(() => {});
     }
-  }, [fontsLoaded]);
+  }, [ready]);
 
-  if (!fontsLoaded) {
+  if (!ready) {
     return null;
   }
 
