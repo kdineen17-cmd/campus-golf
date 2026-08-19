@@ -51,3 +51,16 @@ describe("auth", () => {
     expect(res.status).toBe(401);
   });
 });
+
+describe("requireAuth token sources", () => {
+  it("accepts a token passed as an access_token query param when no Authorization header is sent", async () => {
+    const { token } = await registerUser();
+    const res = await request(app).get(`/users/me/courses?access_token=${token}`);
+    expect(res.status).toBe(200);
+  });
+
+  it("still rejects when neither the header nor the query param carry a token", async () => {
+    const res = await request(app).get("/users/me/courses");
+    expect(res.status).toBe(401);
+  });
+});

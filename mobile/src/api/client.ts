@@ -31,9 +31,22 @@ function buildHeaders(token: string | null | undefined): Headers {
   return headers;
 }
 
+function buildUrl(path: string, token: string | null | undefined): string {
+  // The token is sent both as an Authorization header and as a query
+  // param fallback. Some devices have shown the Authorization header
+  // silently failing to arrive on bodyless GET requests specifically,
+  // with no reproducible cause found client- or server-side — the query
+  // param can't be dropped the same way, since it's part of the URL
+  // itself rather than metadata a networking layer can drop.
+  const url = `${API_URL}${path}`;
+  if (!token) return url;
+  const separator = url.includes("?") ? "&" : "?";
+  return `${url}${separator}access_token=${encodeURIComponent(token)}`;
+}
+
 async function doFetch(path: string, options: RequestOptions): Promise<Response> {
   try {
-    return await fetch(`${API_URL}${path}`, {
+    return await fetch(buildUrl(path, options.token), {
       method: options.method ?? "GET",
       headers: buildHeaders(options.token),
       body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
