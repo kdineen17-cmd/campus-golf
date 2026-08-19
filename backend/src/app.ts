@@ -8,6 +8,11 @@ import { usersRouter } from "./routes/users";
 export function createApp() {
   const app = express();
 
+  // Trust Vercel's edge proxy so req.ip reflects the real client address
+  // (from X-Forwarded-For) rather than the proxy's own address — required
+  // for per-client rate limiting to actually be per-client.
+  app.set("trust proxy", 1);
+
   app.use(cors());
   app.use(express.json());
 
