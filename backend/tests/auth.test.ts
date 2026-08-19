@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import request from "supertest";
 import { describe, expect, it } from "vitest";
+import { createApp } from "../src/app";
 import { app, registerUser } from "./helpers";
 
 describe("auth", () => {
@@ -49,6 +50,32 @@ describe("auth", () => {
       .send({ usernameOrEmail: user.username, password: "wrong-password" });
 
     expect(res.status).toBe(401);
+  });
+});
+
+describe("auth rate limiting", () => {
+  it("blocks further login/register attempts from the same client after the limit is hit", async () => {
+    // The limiter is skipped in the test environment by default (see
+    // src/routes/auth.ts) so the rest of the suite's register/login calls
+    // through the shared app don't trip it. Force it on for this one
+    // isolated app instance to actually exercise the limiter's behavior.
+    process.env.FORCE_RATE_LIMIT = "1";
+    try {
+      const isolatedApp = createApp();
+      const suffix = randomUUID().slice(0, 8);
+
+      let lastStatus = 0;
+      for (let i = 0; i < 31; i++) {
+        const res = await request(isolatedApp)
+          .post("/auth/login")
+          .send({ usernameOrEmail: `nobody_${suffix}`, password: "wrong" });
+        lastStatus = res.status;
+      }
+
+      expect(lastStatus).toBe(429);
+    } finally {
+      delete process.env.FORCE_RATE_LIMIT;
+    }
   });
 });
 
