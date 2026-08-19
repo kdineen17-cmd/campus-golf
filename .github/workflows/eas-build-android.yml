@@ -1,0 +1,35 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # EAS Build compiles remotely on Expo's own servers — this job just
+    # submits it and streams progress, so it stays open for the whole
+    # build (typically 10-20 minutes for a first Android build).
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install mobile dependencies
+        working-directory: mobile
+        run: npm ci
+
+      - name: Build Android APK
+        working-directory: mobile
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          npx --yes eas-cli@latest build \
+            --platform android \
+            --profile preview \
+            --non-interactive
