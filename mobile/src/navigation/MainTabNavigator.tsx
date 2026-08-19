@@ -1,5 +1,5 @@
+import { Ionicons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Text } from "react-native";
 import { CourseListScreen } from "../screens/CourseListScreen";
 import { CreateCourseScreen } from "../screens/CreateCourseScreen";
 import { ProfileScreen } from "../screens/ProfileScreen";
@@ -22,17 +22,32 @@ export function MainTabNavigator() {
       <Tab.Screen
         name="CoursesTab"
         component={CourseListScreen}
-        options={{ title: "Courses", tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>⛳</Text> }}
+        options={{
+          title: "Courses",
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? "flag" : "flag-outline"} size={20} color={color} />
+          ),
+        }}
       />
       <Tab.Screen
         name="CreateTab"
         component={CreateCourseScreen}
-        options={{ title: "Create", tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>📍</Text> }}
+        options={{
+          title: "Create",
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? "add-circle" : "add-circle-outline"} size={20} color={color} />
+          ),
+        }}
       />
       <Tab.Screen
         name="ProfileTab"
         component={ProfileScreen}
-        options={{ title: "Profile", tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>🏌️</Text> }}
+        options={{
+          title: "Profile",
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? "person-circle" : "person-circle-outline"} size={20} color={color} />
+          ),
+        }}
       />
     </Tab.Navigator>
   );
