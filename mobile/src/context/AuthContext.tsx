@@ -24,15 +24,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     (async () => {
-      const [storedToken, storedUser] = await Promise.all([
-        AsyncStorage.getItem(TOKEN_KEY),
-        AsyncStorage.getItem(USER_KEY),
-      ]);
-      if (storedToken && storedUser) {
-        setToken(storedToken);
-        setUser(JSON.parse(storedUser));
+      try {
+        const [storedToken, storedUser] = await Promise.all([
+          AsyncStorage.getItem(TOKEN_KEY),
+          AsyncStorage.getItem(USER_KEY),
+        ]);
+        if (storedToken && storedUser) {
+          setToken(storedToken);
+          setUser(JSON.parse(storedUser));
+        }
+      } catch (err) {
+        // A corrupt stored session or a storage-layer error should never
+        // trap the app on the loading screen forever — fall back to a
+        // logged-out state so the user can still get in via the login form.
+        console.warn("[auth] failed to read stored session:", err);
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     })();
   }, []);
 
