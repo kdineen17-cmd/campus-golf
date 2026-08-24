@@ -34,6 +34,8 @@ export interface HoleDetail {
   tee: LatLng;
   hole: LatLng;
   distanceMeters: number;
+  photo: string | null;
+  flag: { x: number; y: number } | null;
 }
 
 export interface CourseDetail extends CourseSummary {
@@ -45,6 +47,9 @@ export interface NewHoleInput {
   par: number;
   tee: LatLng;
   hole: LatLng;
+  photo?: string;
+  flagX?: number;
+  flagY?: number;
 }
 
 export interface NewCourseInput {

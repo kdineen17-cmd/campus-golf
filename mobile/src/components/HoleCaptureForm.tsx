@@ -1,25 +1,32 @@
 import { useState } from "react";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { LatLng, NewHoleInput } from "../api";
 import { colors, fonts, radii, spacing } from "../theme";
 import { formatDistance } from "../utils/format";
 import { distanceMeters } from "../utils/geo";
 import { getCurrentLatLng, LocationPermissionError } from "../utils/location";
 import { Button } from "./Button";
+import { PhotoFlagCapture } from "./PhotoFlagCapture";
 import { Stepper } from "./Stepper";
 
 interface Props {
   title: string;
   submitLabel: string;
-  onSubmit: (hole: NewHoleInput) => void;
+  onSubmit: (hole: NewHoleInput, strokes?: number) => void;
   submitting?: boolean;
+  /** Lets the designer log their strokes for this hole right after capturing it. */
+  allowScoring?: boolean;
 }
 
-export function HoleCaptureForm({ title, submitLabel, onSubmit, submitting }: Props) {
+export function HoleCaptureForm({ title, submitLabel, onSubmit, submitting, allowScoring }: Props) {
   const [draftTee, setDraftTee] = useState<LatLng | null>(null);
   const [draftHole, setDraftHole] = useState<LatLng | null>(null);
   const [draftPar, setDraftPar] = useState(3);
   const [draftName, setDraftName] = useState("");
+  const [draftStrokes, setDraftStrokes] = useState<number | null>(null);
+  const [draftPhoto, setDraftPhoto] = useState<string | null>(null);
+  const [draftFlagX, setDraftFlagX] = useState<number | null>(null);
+  const [draftFlagY, setDraftFlagY] = useState<number | null>(null);
   const [capturing, setCapturing] = useState<"tee" | "hole" | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -39,11 +46,26 @@ export function HoleCaptureForm({ title, submitLabel, onSubmit, submitting }: Pr
 
   function submit() {
     if (!draftTee || !draftHole) return;
-    onSubmit({ name: draftName.trim() || undefined, par: draftPar, tee: draftTee, hole: draftHole });
+    onSubmit(
+      {
+        name: draftName.trim() || undefined,
+        par: draftPar,
+        tee: draftTee,
+        hole: draftHole,
+        photo: draftPhoto ?? undefined,
+        flagX: draftFlagX ?? undefined,
+        flagY: draftFlagY ?? undefined,
+      },
+      draftStrokes ?? undefined
+    );
     setDraftTee(null);
     setDraftHole(null);
     setDraftPar(3);
     setDraftName("");
+    setDraftStrokes(null);
+    setDraftPhoto(null);
+    setDraftFlagX(null);
+    setDraftFlagY(null);
   }
 
   const canSubmit = draftTee !== null && draftHole !== null && !submitting;
@@ -88,6 +110,31 @@ export function HoleCaptureForm({ title, submitLabel, onSubmit, submitting }: Pr
       />
       <Stepper label="Par" value={draftPar} min={1} max={15} onChange={setDraftPar} />
 
+      <PhotoFlagCapture
+        photo={draftPhoto}
+        flagX={draftFlagX}
+        flagY={draftFlagY}
+        onChange={(photo, flagX, flagY) => {
+          setDraftPhoto(photo);
+          setDraftFlagX(flagX);
+          setDraftFlagY(flagY);
+        }}
+      />
+
+      {allowScoring &&
+        (draftStrokes === null ? (
+          <Pressable onPress={() => setDraftStrokes(draftPar)}>
+            <Text style={styles.scoreToggle}>Played this hole? Log your strokes →</Text>
+          </Pressable>
+        ) : (
+          <View style={styles.scoreBlock}>
+            <Stepper label="Your strokes" value={draftStrokes} min={1} max={15} onChange={setDraftStrokes} />
+            <Pressable onPress={() => setDraftStrokes(null)}>
+              <Text style={styles.scoreClear}>Didn't play it — clear score</Text>
+            </Pressable>
+          </View>
+        ))}
+
       <Button title={submitLabel} onPress={submit} disabled={!canSubmit} loading={submitting} />
     </View>
   );
@@ -118,4 +165,12 @@ const styles = StyleSheet.create({
     fontFamily: fonts.serif,
     color: colors.ink,
   },
+  scoreToggle: { fontSize: 13, fontFamily: fonts.serifBold, color: colors.fairway },
+  scoreBlock: {
+    gap: spacing.sm,
+    backgroundColor: colors.sky,
+    borderRadius: radii.sm,
+    padding: spacing.sm,
+  },
+  scoreClear: { fontSize: 12, fontFamily: fonts.serif, color: colors.muted, textAlign: "center" },
 });

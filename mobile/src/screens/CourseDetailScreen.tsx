@@ -5,6 +5,7 @@ import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, View } from "re
 import { api, ApiError, CourseDetail, LeaderboardEntry } from "../api";
 import { Button } from "../components/Button";
 import { HoleMap } from "../components/HoleMap";
+import { HolePhotoView } from "../components/HolePhotoView";
 import { MapMarkerSpec, MapPolylineSpec } from "../components/HoleMapTypes";
 import { useAuth } from "../context/AuthContext";
 import { AppStackParamList } from "../navigation/types";
@@ -126,6 +127,7 @@ export function CourseDetailScreen({ route, navigation }: Props) {
                 Par {hole.par} · {formatDistance(hole.distanceMeters)}
               </Text>
             </View>
+            {hole.photo && <HolePhotoView photo={hole.photo} flag={hole.flag} style={styles.holeThumb} />}
           </View>
         ))}
 
@@ -204,6 +206,7 @@ const styles = StyleSheet.create({
   },
   holeName: { fontSize: 15, fontFamily: fonts.serifBold, color: colors.ink },
   holeMeta: { fontSize: 12, fontFamily: fonts.serif, color: colors.muted },
+  holeThumb: { width: 64 },
   empty: { color: colors.muted, fontFamily: fonts.serifItalic, fontSize: 13 },
   leaderRow: {
     flexDirection: "row",
