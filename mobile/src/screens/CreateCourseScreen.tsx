@@ -33,16 +33,20 @@ export function CreateCourseScreen({ navigation }: Props) {
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
   const [holes, setHoles] = useState<NewHoleInput[]>([]);
+  // Parallel to `holes`, by index — a played hole's stroke count, if logged.
+  const [strokes, setStrokes] = useState<(number | undefined)[]>([]);
 
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
-  function addHole(hole: NewHoleInput) {
+  function addHole(hole: NewHoleInput, holeStrokes?: number) {
     setHoles((prev) => [...prev, hole]);
+    setStrokes((prev) => [...prev, holeStrokes]);
   }
 
   function removeHole(index: number) {
     setHoles((prev) => prev.filter((_, i) => i !== index));
+    setStrokes((prev) => prev.filter((_, i) => i !== index));
   }
 
   function resetForm() {
@@ -50,6 +54,7 @@ export function CreateCourseScreen({ navigation }: Props) {
     setDescription("");
     setLocation("");
     setHoles([]);
+    setStrokes([]);
   }
 
   async function saveCourse() {
@@ -66,6 +71,25 @@ export function CreateCourseScreen({ navigation }: Props) {
         },
         token
       );
+
+      // If every hole was played while designing, submit the round right
+      // away in the same motion. A round needs a score for every hole, so
+      // a partially-scored course just saves normally with no round logged.
+      if (strokes.length === holes.length && strokes.every((s) => s !== undefined)) {
+        try {
+          const detail = await api.getCourse(course.id);
+          await api.submitRound(
+            course.id,
+            { holes: detail.holes.map((h, i) => ({ holeId: h.id, strokes: strokes[i]! })) },
+            token
+          );
+        } catch {
+          // The course itself saved fine; losing the round log here is a
+          // rare edge case (e.g. a transient network blip) and shouldn't
+          // block the designer from reaching their new course.
+        }
+      }
+
       resetForm();
       navigation.navigate("CourseDetail", { courseId: course.id });
     } catch (e) {
@@ -76,6 +100,8 @@ export function CreateCourseScreen({ navigation }: Props) {
   }
 
   const canSave = name.trim().length >= 3 && holes.length >= 1 && !saving;
+  const scoredCount = strokes.filter((s) => s !== undefined).length;
+  const willLogRound = holes.length > 0 && scoredCount === holes.length;
 
   return (
     <KeyboardAvoidingView
@@ -85,7 +111,8 @@ export function CreateCourseScreen({ navigation }: Props) {
       <ScrollView contentContainerStyle={styles.scroll}>
         <Text style={styles.title}>Design a course</Text>
         <Text style={styles.subtitle}>
-          Walk to each tee and landmark, then tap to drop a pin at your live GPS location.
+          Walk to each tee and landmark, then tap to drop a pin at your live GPS location. Log your
+          strokes as you go to play the course while you build it.
         </Text>
 
         <TextInput
@@ -115,6 +142,7 @@ export function CreateCourseScreen({ navigation }: Props) {
           title={`Hole ${holes.length + 1}`}
           submitLabel="Add hole to course"
           onSubmit={addHole}
+          allowScoring
         />
 
         {error && <Text style={styles.error}>{error}</Text>}
@@ -129,6 +157,7 @@ export function CreateCourseScreen({ navigation }: Props) {
                   <Text style={styles.holeName}>{h.name || `Hole ${i + 1}`}</Text>
                   <Text style={styles.holeMeta}>
                     Par {h.par} · {formatDistance(distanceMeters(h.tee, h.hole))}
+                    {strokes[i] !== undefined ? ` · You: ${strokes[i]}` : ""}
                   </Text>
                 </View>
                 <Text style={styles.remove} onPress={() => removeHole(i)}>
@@ -136,10 +165,21 @@ export function CreateCourseScreen({ navigation }: Props) {
                 </Text>
               </View>
             ))}
+            {scoredCount > 0 && (
+              <Text style={styles.scoreSummary}>
+                {willLogRound
+                  ? "All holes scored — saving will also log your round."
+                  : `${scoredCount} of ${holes.length} holes scored — score every hole to log a round.`}
+              </Text>
+            )}
           </View>
         )}
 
-        <Button title={saving ? "Saving..." : "Save course"} onPress={saveCourse} disabled={!canSave} />
+        <Button
+          title={saving ? "Saving..." : willLogRound ? "Save course & log round" : "Save course"}
+          onPress={saveCourse}
+          disabled={!canSave}
+        />
         {saving && <ActivityIndicator style={{ marginTop: spacing.sm }} />}
       </ScrollView>
     </KeyboardAvoidingView>
@@ -191,4 +231,11 @@ const styles = StyleSheet.create({
   holeName: { fontSize: 14, fontFamily: fonts.serifBold, color: colors.ink },
   holeMeta: { fontSize: 12, fontFamily: fonts.serif, color: colors.muted },
   remove: { color: colors.danger, fontFamily: fonts.serifBold, fontSize: 12 },
+  scoreSummary: {
+    fontSize: 12,
+    fontFamily: fonts.serifItalic,
+    color: colors.fairway,
+    textAlign: "center",
+    marginTop: spacing.xs,
+  },
 });

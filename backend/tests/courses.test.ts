@@ -105,6 +105,49 @@ describe("courses", () => {
     expect(res.body.holes[2].name).toBe("Bonus Hole");
   });
 
+  it("stores and returns a hole's tee-box photo and flag position", async () => {
+    const photo = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAA==";
+    const res = await request(app)
+      .post("/courses")
+      .set("Authorization", `Bearer ${token}`)
+      .send({
+        name: "Photo Course",
+        holes: [
+          {
+            par: 3,
+            tee: { lat: 40.0, lng: -73.0 },
+            hole: { lat: 40.001, lng: -73.001 },
+            photo,
+            flagX: 0.62,
+            flagY: 0.3,
+          },
+        ],
+      });
+    expect(res.status).toBe(201);
+
+    const detail = await request(app).get(`/courses/${res.body.id}`);
+    expect(detail.body.holes[0].photo).toBe(photo);
+    expect(detail.body.holes[0].flag).toEqual({ x: 0.62, y: 0.3 });
+  });
+
+  it("rejects a photo that isn't a data URL", async () => {
+    const res = await request(app)
+      .post("/courses")
+      .set("Authorization", `Bearer ${token}`)
+      .send({
+        name: "Bad Photo Course",
+        holes: [
+          {
+            par: 3,
+            tee: { lat: 40.0, lng: -73.0 },
+            hole: { lat: 40.001, lng: -73.001 },
+            photo: "https://example.com/not-a-data-url.jpg",
+          },
+        ],
+      });
+    expect(res.status).toBe(400);
+  });
+
   it("forbids a non-creator from appending a hole", async () => {
     const course = await createCourse(token);
     const other = await registerUser();

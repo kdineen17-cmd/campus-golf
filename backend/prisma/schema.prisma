@@ -45,6 +45,11 @@ model Hole {
   teeLng   Float
   holeLat  Float
   holeLng  Float
+  // A tee-box photo (data URL) with the flag position marked as a fraction
+  // (0-1) of the image's width/height, so it stays correct at any display size.
+  photo    String?
+  flagX    Float?
+  flagY    Float?
 
   course     Course      @relation(fields: [courseId], references: [id], onDelete: Cascade)
   roundHoles RoundHole[]

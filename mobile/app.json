@@ -49,6 +49,12 @@
           "image": "./assets/icon.png",
           "imageWidth": 120
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "Campus Golf uses your camera to take a tee-box photo for each hole, so you can mark the flag position."
+        }
       ]
     ],
     "extra": {

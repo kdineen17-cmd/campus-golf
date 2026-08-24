@@ -16,6 +16,16 @@ const holeSchema = z.object({
   par: z.number().int().min(1).max(15),
   tee: latLng,
   hole: latLng,
+  // A tee-box photo as a data URL, with the flag position marked as a
+  // fraction (0-1) of the image's width/height. Size-capped well above what
+  // a client-side-compressed photo should ever produce, as a sanity limit.
+  photo: z
+    .string()
+    .startsWith("data:image/")
+    .max(3_000_000)
+    .optional(),
+  flagX: z.number().min(0).max(1).optional(),
+  flagY: z.number().min(0).max(1).optional(),
 });
 
 const createCourseSchema = z.object({
@@ -34,6 +44,9 @@ export interface HoleRow {
   teeLng: number;
   holeLat: number;
   holeLng: number;
+  photo: string | null;
+  flagX: number | null;
+  flagY: number | null;
 }
 
 export interface CourseRow {
@@ -100,6 +113,9 @@ coursesRouter.post("/", requireAuth, async (req: AuthedRequest, res) => {
           teeLng: h.tee.lng,
           holeLat: h.hole.lat,
           holeLng: h.hole.lng,
+          photo: h.photo,
+          flagX: h.flagX,
+          flagY: h.flagY,
         })),
       },
     },
@@ -118,6 +134,8 @@ function courseDetail(course: CourseRow) {
     tee: { lat: h.teeLat, lng: h.teeLng },
     hole: { lat: h.holeLat, lng: h.holeLng },
     distanceMeters: Math.round(haversineMeters(h.teeLat, h.teeLng, h.holeLat, h.holeLng)),
+    photo: h.photo,
+    flag: h.flagX !== null && h.flagY !== null ? { x: h.flagX, y: h.flagY } : null,
   }));
   return { ...courseSummary(course), holes };
 }
@@ -203,6 +221,9 @@ coursesRouter.post("/:id/holes", requireAuth, async (req: AuthedRequest, res) =>
       teeLng: h.tee.lng,
       holeLat: h.hole.lat,
       holeLng: h.hole.lng,
+      photo: h.photo,
+      flagX: h.flagX,
+      flagY: h.flagY,
     },
   });
 

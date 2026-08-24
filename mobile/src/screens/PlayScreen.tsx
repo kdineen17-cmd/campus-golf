@@ -6,6 +6,7 @@ import { api, ApiError, CourseDetail, LatLng } from "../api";
 import { Button } from "../components/Button";
 import { HoleMap } from "../components/HoleMap";
 import { MapMarkerSpec } from "../components/HoleMapTypes";
+import { HolePhotoView } from "../components/HolePhotoView";
 import { Stepper } from "../components/Stepper";
 import { useAuth } from "../context/AuthContext";
 import { AppStackParamList } from "../navigation/types";
@@ -118,6 +119,8 @@ export function PlayScreen({ route, navigation }: Props) {
             <Text style={styles.liveDistance}>{formatDistance(distanceToHole)} from you to the hole</Text>
           )}
 
+          {hole.photo && <HolePhotoView photo={hole.photo} flag={hole.flag} style={styles.holePhoto} />}
+
           <View style={styles.strokesCard}>
             <Stepper
               label="Strokes"
@@ -229,6 +232,7 @@ const styles = StyleSheet.create({
   holeName: { fontSize: 26, fontFamily: fonts.displayBlack, color: colors.fairwayDark },
   holeMeta: { fontSize: 14, fontFamily: fonts.serif, color: colors.muted },
   liveDistance: { fontSize: 14, fontFamily: fonts.serifBold, color: colors.fairway },
+  holePhoto: { width: "100%", marginTop: spacing.sm },
   strokesCard: {
     backgroundColor: colors.card,
     borderRadius: radii.md,
