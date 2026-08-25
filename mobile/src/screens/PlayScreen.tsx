@@ -104,7 +104,7 @@ export function PlayScreen({ route, navigation }: Props) {
     const polylines = [{ id: "route", points: [hole.tee, hole.hole], color: colors.fairway }];
 
     return (
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         <HoleMap style={styles.map} region={region} markers={markers} polylines={polylines} live />
 
         <View style={styles.body}>
@@ -147,7 +147,7 @@ export function PlayScreen({ route, navigation }: Props) {
             </View>
           </View>
         </View>
-      </View>
+      </ScrollView>
     );
   }
 
@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
   center: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.sky },
   error: { color: colors.danger, fontFamily: fonts.serif, textAlign: "center", padding: spacing.md },
   map: { width: "100%", height: 260 },
-  body: { padding: spacing.lg, gap: spacing.sm },
+  body: { padding: spacing.lg, paddingBottom: spacing.xl * 2, gap: spacing.sm },
   holeLabel: { fontSize: 12, fontFamily: fonts.serifBold, color: colors.gold, letterSpacing: 1.5 },
   holeName: { fontSize: 26, fontFamily: fonts.displayBlack, color: colors.fairwayDark },
   holeMeta: { fontSize: 14, fontFamily: fonts.serif, color: colors.muted },
