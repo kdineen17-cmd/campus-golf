@@ -2,7 +2,7 @@ import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { CompositeScreenProps, useFocusEffect } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useCallback, useState } from "react";
-import { ActivityIndicator, FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Alert, FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from "react-native";
 import { api, ApiError, CourseSummary, RoundHistoryEntry } from "../api";
 import { Button } from "../components/Button";
 import { useAuth } from "../context/AuthContext";
@@ -24,6 +24,7 @@ export function ProfileScreen({ navigation }: Props) {
   const [courses, setCourses] = useState<CourseSummary[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const load = useCallback(async () => {
     if (!token) return;
@@ -47,6 +48,29 @@ export function ProfileScreen({ navigation }: Props) {
     setRefreshing(true);
     await load();
     setRefreshing(false);
+  }
+
+  function confirmDeleteAccount() {
+    Alert.alert(
+      "Delete your account?",
+      "This permanently deletes your account, every course you created, and your round history. This cannot be undone.",
+      [
+        { text: "Cancel", style: "cancel" },
+        { text: "Delete", style: "destructive", onPress: deleteAccount },
+      ]
+    );
+  }
+
+  async function deleteAccount() {
+    if (!token) return;
+    setDeleting(true);
+    try {
+      await api.deleteAccount(token);
+      logout();
+    } catch (e) {
+      setError(e instanceof ApiError ? e.message : "Could not delete your account.");
+      setDeleting(false);
+    }
   }
 
   const roundsPlayed = rounds?.length ?? 0;
@@ -147,6 +171,9 @@ export function ProfileScreen({ navigation }: Props) {
       <View style={styles.footer}>
         <Button title="Official Rules" variant="secondary" onPress={() => navigation.navigate("Rules")} />
         <Button title="Log out" variant="danger" onPress={logout} />
+        <Pressable onPress={deleting ? undefined : confirmDeleteAccount} disabled={deleting} style={styles.deleteLink}>
+          <Text style={styles.deleteLinkText}>{deleting ? "Deleting…" : "Delete my account"}</Text>
+        </Pressable>
       </View>
     </View>
   );
@@ -203,4 +230,6 @@ const styles = StyleSheet.create({
   strokes: { fontSize: 19, fontFamily: fonts.displayBlack, color: colors.fairway, width: 32, textAlign: "right" },
   relative: { fontSize: 12, fontFamily: fonts.serif, color: colors.muted, width: 28, textAlign: "right" },
   footer: { padding: spacing.lg, gap: spacing.sm },
+  deleteLink: { alignItems: "center", paddingVertical: spacing.sm },
+  deleteLinkText: { fontSize: 13, fontFamily: fonts.serif, color: colors.muted, textDecorationLine: "underline" },
 });

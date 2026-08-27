@@ -44,3 +44,12 @@ usersRouter.get("/me/rounds", requireAuth, async (req: AuthedRequest, res) => {
     }))
   );
 });
+
+// Permanently delete the signed-in user's account. Cascades to every course
+// they created and every round they played (on any course), per the schema's
+// onDelete: Cascade on Course.creator and Round.player.
+usersRouter.delete("/me", requireAuth, async (req: AuthedRequest, res) => {
+  const userId = req.user!.userId;
+  await prisma.user.delete({ where: { id: userId } });
+  res.status(204).send();
+});

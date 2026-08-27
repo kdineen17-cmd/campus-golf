@@ -4,6 +4,7 @@ import { authRouter } from "./routes/auth";
 import { coursesRouter } from "./routes/courses";
 import { roundsRouter } from "./routes/rounds";
 import { usersRouter } from "./routes/users";
+import { privacyRouter } from "./routes/privacy";
 
 export function createApp() {
   const app = express();
@@ -21,6 +22,7 @@ export function createApp() {
   app.use(express.json({ limit: "4mb" }));
 
   app.get("/health", (_req, res) => res.json({ ok: true }));
+  app.use("/privacy", privacyRouter);
 
   app.use("/auth", authRouter);
   app.use("/courses", coursesRouter);
