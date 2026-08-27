@@ -1,6 +1,7 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useState } from "react";
 import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ApiError } from "../api";
 import { Button } from "../components/Button";
 import { useAuth } from "../context/AuthContext";
@@ -10,6 +11,7 @@ import { colors, fonts, radii, spacing } from "../theme";
 type Props = NativeStackScreenProps<AuthStackParamList, "Register">;
 
 export function RegisterScreen({ navigation }: Props) {
+  const insets = useSafeAreaInsets();
   const { register } = useAuth();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -32,7 +34,7 @@ export function RegisterScreen({ navigation }: Props) {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : undefined}
-      style={styles.container}
+      style={[styles.container, { paddingTop: insets.top + spacing.lg }]}
     >
       <View style={styles.header}>
         <Text style={styles.title}>Join Home Course</Text>
