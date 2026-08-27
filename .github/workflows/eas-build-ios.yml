@@ -1,0 +1,69 @@
+name: Build iOS App
+
+on:
+  workflow_dispatch:
+    inputs:
+      submit:
+        description: "Also submit the finished build to TestFlight/App Store Connect"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # EAS Build compiles remotely on Expo's own servers — this job just
+    # submits it and streams progress, so it stays open for the whole
+    # build (typically 15-25 minutes for a first iOS build, since EAS also
+    # has to generate the distribution certificate and provisioning
+    # profile via the App Store Connect API key the first time).
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install mobile dependencies
+        working-directory: mobile
+        run: npm ci
+
+      # Written to the runner's temp dir, never the checkout, so it can't
+      # end up committed or persisted anywhere past this job. Passed via
+      # env (not interpolated into the script text) so shell metacharacters
+      # in the key content can't be misinterpreted.
+      - name: Write App Store Connect API key
+        env:
+          ASC_API_KEY: ${{ secrets.APPLE_ASC_API_KEY }}
+        run: echo "$ASC_API_KEY" > "$RUNNER_TEMP/AuthKey.p8"
+
+      - name: Build iOS app
+        working-directory: mobile
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          EXPO_ASC_API_KEY_PATH: ${{ runner.temp }}/AuthKey.p8
+          EXPO_ASC_KEY_ID: ${{ secrets.APPLE_ASC_KEY_ID }}
+          EXPO_ASC_ISSUER_ID: ${{ secrets.APPLE_ASC_ISSUER_ID }}
+        run: |
+          npx --yes eas-cli@latest build \
+            --platform ios \
+            --profile production \
+            --non-interactive
+
+      - name: Submit to TestFlight
+        if: ${{ github.event.inputs.submit == 'true' }}
+        working-directory: mobile
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          EXPO_ASC_API_KEY_PATH: ${{ runner.temp }}/AuthKey.p8
+          EXPO_ASC_KEY_ID: ${{ secrets.APPLE_ASC_KEY_ID }}
+          EXPO_ASC_ISSUER_ID: ${{ secrets.APPLE_ASC_ISSUER_ID }}
+        run: |
+          npx --yes eas-cli@latest submit \
+            --platform ios \
+            --profile production \
+            --latest \
+            --non-interactive
