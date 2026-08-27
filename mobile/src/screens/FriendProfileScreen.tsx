@@ -2,6 +2,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from "react-native";
 import { api, ApiError, UserProfile } from "../api";
+import { Button } from "../components/Button";
 import { useAuth } from "../context/AuthContext";
 import { AppStackParamList } from "../navigation/types";
 import { colors, fonts, radii, spacing } from "../theme";
@@ -17,7 +18,10 @@ export function FriendProfileScreen({ route, navigation }: Props) {
   const [tab, setTab] = useState<Tab>("rounds");
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [notFriend, setNotFriend] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [sendingRequest, setSendingRequest] = useState(false);
+  const [requestSent, setRequestSent] = useState(false);
 
   useEffect(() => {
     navigation.setOptions({ title: username });
@@ -27,10 +31,15 @@ export function FriendProfileScreen({ route, navigation }: Props) {
     if (!token) return;
     try {
       setError(null);
+      setNotFriend(false);
       const data = await api.getUserProfile(userId, token);
       setProfile(data);
     } catch (e) {
-      setError(e instanceof ApiError ? e.message : "Could not load this profile.");
+      if (e instanceof ApiError && e.status === 403) {
+        setNotFriend(true);
+      } else {
+        setError(e instanceof ApiError ? e.message : "Could not load this profile.");
+      }
     }
   }, [token, userId]);
 
@@ -42,6 +51,35 @@ export function FriendProfileScreen({ route, navigation }: Props) {
     setRefreshing(true);
     await load();
     setRefreshing(false);
+  }
+
+  async function addFriend() {
+    if (!token) return;
+    setSendingRequest(true);
+    setError(null);
+    try {
+      await api.sendFriendRequest(username, token);
+      setRequestSent(true);
+    } catch (e) {
+      setError(e instanceof ApiError ? e.message : "Could not send that friend request.");
+    } finally {
+      setSendingRequest(false);
+    }
+  }
+
+  if (notFriend) {
+    return (
+      <View style={styles.notFriendContainer}>
+        <Text style={styles.title}>{username}</Text>
+        <Text style={styles.notFriendText}>
+          {requestSent
+            ? `Friend request sent to ${username}.`
+            : `You're not friends with ${username} yet — add them to see their rounds, courses, and friends.`}
+        </Text>
+        {error && <Text style={styles.error}>{error}</Text>}
+        {!requestSent && <Button title="Add as friend" onPress={addFriend} loading={sendingRequest} />}
+      </View>
+    );
   }
 
   return (
@@ -134,6 +172,15 @@ export function FriendProfileScreen({ route, navigation }: Props) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.sky },
+  notFriendContainer: {
+    flex: 1,
+    backgroundColor: colors.sky,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: spacing.xl,
+    gap: spacing.md,
+  },
+  notFriendText: { fontSize: 15, fontFamily: fonts.serif, color: colors.ink, textAlign: "center" },
   header: { padding: spacing.lg, paddingBottom: spacing.sm },
   title: { fontSize: 30, fontFamily: fonts.displayBlack, color: colors.fairwayDark },
   statsRow: { flexDirection: "row", gap: spacing.lg, marginTop: spacing.md },
