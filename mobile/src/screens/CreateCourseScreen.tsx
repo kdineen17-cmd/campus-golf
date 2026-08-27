@@ -12,6 +12,7 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { api, ApiError, NewHoleInput } from "../api";
 import { Button } from "../components/Button";
 import { HoleCaptureForm } from "../components/HoleCaptureForm";
@@ -27,6 +28,7 @@ type Props = CompositeScreenProps<
 >;
 
 export function CreateCourseScreen({ navigation }: Props) {
+  const insets = useSafeAreaInsets();
   const { token } = useAuth();
 
   const [name, setName] = useState("");
@@ -108,7 +110,7 @@ export function CreateCourseScreen({ navigation }: Props) {
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
-      <ScrollView contentContainerStyle={styles.scroll}>
+      <ScrollView contentContainerStyle={[styles.scroll, { paddingTop: insets.top / 2 + spacing.lg }]}>
         <Text style={styles.title}>Design a course</Text>
         <Text style={styles.subtitle}>
           Walk to each tee and landmark, then tap to drop a pin at your live GPS location. Log your

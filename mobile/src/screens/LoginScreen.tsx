@@ -1,6 +1,7 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useState } from "react";
 import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ApiError } from "../api";
 import { Button } from "../components/Button";
 import { BUILD_MARKER } from "../buildInfo";
@@ -11,6 +12,7 @@ import { colors, fonts, radii, spacing } from "../theme";
 type Props = NativeStackScreenProps<AuthStackParamList, "Login">;
 
 export function LoginScreen({ navigation }: Props) {
+  const insets = useSafeAreaInsets();
   const { login } = useAuth();
   const [usernameOrEmail, setUsernameOrEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -32,13 +34,13 @@ export function LoginScreen({ navigation }: Props) {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : undefined}
-      style={styles.container}
+      style={[styles.container, { paddingTop: insets.top / 2 + spacing.lg }]}
     >
       <View style={styles.header}>
         <Text style={styles.eyebrow}>ESTABLISHED FOR THE PUBLIC PARK</Text>
         <Text style={styles.title}>Home Course</Text>
         <View style={styles.rule} />
-        <Text style={styles.subtitle}>Play the park. Chase the course record.</Text>
+        <Text style={styles.subtitle}>Design your own course. Play it with friends.</Text>
       </View>
 
       <View style={styles.form}>

@@ -6,6 +6,7 @@ export type AuthStackParamList = {
 export type MainTabParamList = {
   CoursesTab: undefined;
   CreateTab: undefined;
+  FriendsTab: undefined;
   ProfileTab: undefined;
 };
 
@@ -16,4 +17,7 @@ export type AppStackParamList = {
   AddHole: { courseId: string };
   EditCourse: { courseId: string };
   Rules: undefined;
+  FriendProfile: { userId: string; username: string };
+  MyQrCode: undefined;
+  ScanQr: undefined;
 };

@@ -1,50 +1,42 @@
-import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
-import { CompositeScreenProps, useFocusEffect } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useCallback, useState } from "react";
-import { ActivityIndicator, Alert, FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { api, ApiError, CourseSummary, RoundHistoryEntry } from "../api";
-import { Button } from "../components/Button";
+import { useCallback, useEffect, useState } from "react";
+import { ActivityIndicator, FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from "react-native";
+import { api, ApiError, UserProfile } from "../api";
 import { useAuth } from "../context/AuthContext";
-import { AppStackParamList, MainTabParamList } from "../navigation/types";
+import { AppStackParamList } from "../navigation/types";
 import { colors, fonts, radii, spacing } from "../theme";
 import { formatDistance, formatDuration, formatHoleCount } from "../utils/format";
 
-type Props = CompositeScreenProps<
-  BottomTabScreenProps<MainTabParamList, "ProfileTab">,
-  NativeStackScreenProps<AppStackParamList>
->;
+type Props = NativeStackScreenProps<AppStackParamList, "FriendProfile">;
 
 type Tab = "rounds" | "courses";
 
-export function ProfileScreen({ navigation }: Props) {
-  const insets = useSafeAreaInsets();
-  const { user, token, logout } = useAuth();
+export function FriendProfileScreen({ route, navigation }: Props) {
+  const { userId, username } = route.params;
+  const { token } = useAuth();
   const [tab, setTab] = useState<Tab>("rounds");
-  const [rounds, setRounds] = useState<RoundHistoryEntry[] | null>(null);
-  const [courses, setCourses] = useState<CourseSummary[] | null>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
-  const [deleting, setDeleting] = useState(false);
+
+  useEffect(() => {
+    navigation.setOptions({ title: username });
+  }, [navigation, username]);
 
   const load = useCallback(async () => {
     if (!token) return;
     try {
       setError(null);
-      const [roundsData, coursesData] = await Promise.all([api.getMyRounds(token), api.getMyCourses(token)]);
-      setRounds(roundsData);
-      setCourses(coursesData);
+      const data = await api.getUserProfile(userId, token);
+      setProfile(data);
     } catch (e) {
-      setError(e instanceof ApiError ? e.message : "Could not load your profile.");
+      setError(e instanceof ApiError ? e.message : "Could not load this profile.");
     }
-  }, [token]);
+  }, [token, userId]);
 
-  useFocusEffect(
-    useCallback(() => {
-      load();
-    }, [load])
-  );
+  useEffect(() => {
+    load();
+  }, [load]);
 
   async function onRefresh() {
     setRefreshing(true);
@@ -52,49 +44,22 @@ export function ProfileScreen({ navigation }: Props) {
     setRefreshing(false);
   }
 
-  function confirmDeleteAccount() {
-    Alert.alert(
-      "Delete your account?",
-      "This permanently deletes your account, every course you created, and your round history. This cannot be undone.",
-      [
-        { text: "Cancel", style: "cancel" },
-        { text: "Delete", style: "destructive", onPress: deleteAccount },
-      ]
-    );
-  }
-
-  async function deleteAccount() {
-    if (!token) return;
-    setDeleting(true);
-    try {
-      await api.deleteAccount(token);
-      logout();
-    } catch (e) {
-      setError(e instanceof ApiError ? e.message : "Could not delete your account.");
-      setDeleting(false);
-    }
-  }
-
-  const roundsPlayed = rounds?.length ?? 0;
-  const coursesPlayed = rounds ? new Set(rounds.map((r) => r.course.id)).size : 0;
-  const coursesCreated = courses?.length ?? 0;
-
   return (
-    <View style={[styles.container, { paddingTop: insets.top / 2 + spacing.lg }]}>
+    <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>{user?.username}</Text>
+        <Text style={styles.title}>{username}</Text>
         <View style={styles.statsRow}>
           <View style={styles.statBlock}>
-            <Text style={styles.statValue}>{roundsPlayed}</Text>
+            <Text style={styles.statValue}>{profile?.roundsPlayed ?? 0}</Text>
             <Text style={styles.statLabel}>rounds played</Text>
           </View>
           <View style={styles.statBlock}>
-            <Text style={styles.statValue}>{coursesPlayed}</Text>
-            <Text style={styles.statLabel}>courses played</Text>
+            <Text style={styles.statValue}>{profile?.coursesCreated ?? 0}</Text>
+            <Text style={styles.statLabel}>courses created</Text>
           </View>
           <View style={styles.statBlock}>
-            <Text style={styles.statValue}>{coursesCreated}</Text>
-            <Text style={styles.statLabel}>courses created</Text>
+            <Text style={styles.statValue}>{profile?.friendsCount ?? 0}</Text>
+            <Text style={styles.statLabel}>friends</Text>
           </View>
         </View>
       </View>
@@ -107,23 +72,21 @@ export function ProfileScreen({ navigation }: Props) {
           style={[styles.tabButton, tab === "courses" && styles.tabButtonActive]}
           onPress={() => setTab("courses")}
         >
-          <Text style={[styles.tabText, tab === "courses" && styles.tabTextActive]}>My Courses</Text>
+          <Text style={[styles.tabText, tab === "courses" && styles.tabTextActive]}>Courses Created</Text>
         </Pressable>
       </View>
 
-      {rounds === null && courses === null && !error && <ActivityIndicator style={{ marginTop: spacing.xl }} />}
+      {profile === null && !error && <ActivityIndicator style={{ marginTop: spacing.xl }} />}
       {error && <Text style={styles.error}>{error}</Text>}
 
       {tab === "rounds" ? (
         <FlatList
-          data={rounds ?? []}
+          data={profile?.rounds ?? []}
           keyExtractor={(r) => r.id}
           contentContainerStyle={styles.list}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
           ListEmptyComponent={
-            rounds !== null ? (
-              <Text style={styles.empty}>No rounds yet — play a course to start your history.</Text>
-            ) : null
+            profile !== null ? <Text style={styles.empty}>No rounds yet.</Text> : null
           }
           renderItem={({ item }) => {
             const relative = item.totalStrokes - item.course.totalPar;
@@ -146,16 +109,12 @@ export function ProfileScreen({ navigation }: Props) {
         />
       ) : (
         <FlatList
-          data={courses ?? []}
+          data={profile?.courses ?? []}
           keyExtractor={(c) => c.id}
           contentContainerStyle={styles.list}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
           ListEmptyComponent={
-            courses !== null ? (
-              <Text style={styles.empty}>
-                You haven't designed a course yet — head to the Create tab to walk your first one.
-              </Text>
-            ) : null
+            profile !== null ? <Text style={styles.empty}>{username} hasn't created a course yet.</Text> : null
           }
           renderItem={({ item }) => (
             <Pressable style={styles.row} onPress={() => navigation.navigate("CourseDetail", { courseId: item.id })}>
@@ -169,14 +128,6 @@ export function ProfileScreen({ navigation }: Props) {
           )}
         />
       )}
-
-      <View style={styles.footer}>
-        <Button title="Official Rules" variant="secondary" onPress={() => navigation.navigate("Rules")} />
-        <Button title="Log out" variant="danger" onPress={logout} />
-        <Pressable onPress={deleting ? undefined : confirmDeleteAccount} disabled={deleting} style={styles.deleteLink}>
-          <Text style={styles.deleteLinkText}>{deleting ? "Deleting…" : "Delete my account"}</Text>
-        </Pressable>
-      </View>
     </View>
   );
 }
@@ -231,7 +182,4 @@ const styles = StyleSheet.create({
   meta: { fontSize: 12, fontFamily: fonts.serif, color: colors.muted, marginTop: 2 },
   strokes: { fontSize: 19, fontFamily: fonts.displayBlack, color: colors.fairway, width: 32, textAlign: "right" },
   relative: { fontSize: 12, fontFamily: fonts.serif, color: colors.muted, width: 28, textAlign: "right" },
-  footer: { padding: spacing.lg, gap: spacing.sm },
-  deleteLink: { alignItems: "center", paddingVertical: spacing.sm },
-  deleteLinkText: { fontSize: 13, fontFamily: fonts.serif, color: colors.muted, textDecorationLine: "underline" },
 });

@@ -18,6 +18,9 @@ model User {
 
   courses Course[]
   rounds  Round[]
+
+  sentFriendRequests     Friendship[] @relation("FriendshipRequester")
+  receivedFriendRequests Friendship[] @relation("FriendshipAddressee")
 }
 
 model Course {
@@ -71,6 +74,24 @@ model Round {
 
   @@index([courseId, totalStrokes])
   @@index([playerId])
+}
+
+model Friendship {
+  id          String    @id @default(cuid())
+  requesterId String
+  addresseeId String
+  // "pending" until the addressee accepts; accepted friendships are
+  // mutual (either side can view/unfriend). Declined/cancelled requests
+  // are deleted rather than tracked.
+  status      String    @default("pending")
+  createdAt   DateTime  @default(now())
+  respondedAt DateTime?
+
+  requester User @relation("FriendshipRequester", fields: [requesterId], references: [id], onDelete: Cascade)
+  addressee User @relation("FriendshipAddressee", fields: [addresseeId], references: [id], onDelete: Cascade)
+
+  @@unique([requesterId, addresseeId])
+  @@index([addresseeId])
 }
 
 model RoundHole {

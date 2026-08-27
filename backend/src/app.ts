@@ -5,6 +5,7 @@ import { coursesRouter } from "./routes/courses";
 import { roundsRouter } from "./routes/rounds";
 import { usersRouter } from "./routes/users";
 import { privacyRouter } from "./routes/privacy";
+import { friendsRouter } from "./routes/friends";
 
 export function createApp() {
   const app = express();
@@ -28,6 +29,7 @@ export function createApp() {
   app.use("/courses", coursesRouter);
   app.use("/courses/:courseId/rounds", roundsRouter);
   app.use("/users", usersRouter);
+  app.use("/friends", friendsRouter);
 
   app.use((req, res) => {
     res.status(404).json({ error: `No route for ${req.method} ${req.path}` });

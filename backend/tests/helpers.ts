@@ -37,3 +37,11 @@ export async function createCourse(
   }
   return res.body as { id: string; name: string };
 }
+
+export async function befriend(tokenA: string, usernameB: string, tokenB: string) {
+  const sendRes = await request(app)
+    .post("/friends/requests")
+    .set("Authorization", `Bearer ${tokenA}`)
+    .send({ username: usernameB });
+  await request(app).post(`/friends/requests/${sendRes.body.id}/accept`).set("Authorization", `Bearer ${tokenB}`);
+}

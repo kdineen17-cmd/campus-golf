@@ -12,6 +12,7 @@ import {
   Text,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { api, ApiError, CourseSummary, LatLng } from "../api";
 import { AppStackParamList, MainTabParamList } from "../navigation/types";
 import { colors, fonts, radii, spacing } from "../theme";
@@ -25,6 +26,7 @@ type Props = CompositeScreenProps<
 >;
 
 export function CourseListScreen({ navigation }: Props) {
+  const insets = useSafeAreaInsets();
   const [courses, setCourses] = useState<CourseSummary[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
@@ -71,7 +73,7 @@ export function CourseListScreen({ navigation }: Props) {
   }, [courses, userLocation]);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top / 2 + spacing.lg }]}>
       <View style={styles.header}>
         <Text style={styles.title}>Courses</Text>
         <Text style={styles.subtitle}>
