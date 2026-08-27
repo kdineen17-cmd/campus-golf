@@ -10,6 +10,7 @@ import { useAuth } from "../context/AuthContext";
 import { AppStackParamList, MainTabParamList } from "../navigation/types";
 import { colors, fonts, radii, spacing } from "../theme";
 import { formatDistance, formatDuration, formatHoleCount } from "../utils/format";
+import { shareProfile } from "../utils/share";
 
 type Props = CompositeScreenProps<
   BottomTabScreenProps<MainTabParamList, "ProfileTab">,
@@ -171,6 +172,11 @@ export function ProfileScreen({ navigation }: Props) {
       )}
 
       <View style={styles.footer}>
+        <Button
+          title="Share my profile"
+          variant="secondary"
+          onPress={() => user && shareProfile(user.id, user.username)}
+        />
         <Button title="Official Rules" variant="secondary" onPress={() => navigation.navigate("Rules")} />
         <Button title="Log out" variant="danger" onPress={logout} />
         <Pressable onPress={deleting ? undefined : confirmDeleteAccount} disabled={deleting} style={styles.deleteLink}>

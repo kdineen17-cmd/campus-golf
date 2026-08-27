@@ -12,6 +12,7 @@ import { AppStackParamList } from "../navigation/types";
 import { colors, fonts, radii, spacing } from "../theme";
 import { formatDistance, formatDuration, formatHoleCount } from "../utils/format";
 import { regionForPoints } from "../utils/region";
+import { shareCourse } from "../utils/share";
 
 type Props = NativeStackScreenProps<AppStackParamList, "CourseDetail">;
 
@@ -116,6 +117,7 @@ export function CourseDetailScreen({ route, navigation }: Props) {
         <Text style={styles.creator}>Designed by {course.creator.username}</Text>
 
         <Button title="Play this course" onPress={() => navigation.navigate("Play", { courseId })} />
+        <Button title="Share course" variant="secondary" onPress={() => shareCourse(courseId, course.name)} />
 
         <Text style={styles.sectionTitle}>Holes</Text>
         {course.holes.map((hole) => (
