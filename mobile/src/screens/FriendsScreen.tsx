@@ -113,7 +113,7 @@ export function FriendsScreen({ navigation }: Props) {
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       contentContainerStyle={styles.content}
     >
-      <Text style={styles.title}>Friends</Text>
+      <Text style={styles.title}>Friends and Competitors</Text>
       <Text style={styles.subtitle}>Add friends by username to see them on the course.</Text>
 
       <View style={styles.qrRow}>
