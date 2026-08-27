@@ -3,6 +3,7 @@ import { CompositeScreenProps, useFocusEffect } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useCallback, useState } from "react";
 import { ActivityIndicator, Alert, FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { api, ApiError, CourseSummary, RoundHistoryEntry } from "../api";
 import { Button } from "../components/Button";
 import { useAuth } from "../context/AuthContext";
@@ -18,6 +19,7 @@ type Props = CompositeScreenProps<
 type Tab = "rounds" | "courses";
 
 export function ProfileScreen({ navigation }: Props) {
+  const insets = useSafeAreaInsets();
   const { user, token, logout } = useAuth();
   const [tab, setTab] = useState<Tab>("rounds");
   const [rounds, setRounds] = useState<RoundHistoryEntry[] | null>(null);
@@ -78,7 +80,7 @@ export function ProfileScreen({ navigation }: Props) {
   const coursesCreated = courses?.length ?? 0;
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top + spacing.lg }]}>
       <View style={styles.header}>
         <Text style={styles.title}>{user?.username}</Text>
         <View style={styles.statsRow}>
