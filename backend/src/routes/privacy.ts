@@ -40,7 +40,7 @@ const PRIVACY_HTML = `<!DOCTYPE html>
 <p>Your data is retained as long as your account exists. You can permanently delete your account at any time from within the app: go to <strong>Profile → Delete my account</strong>. This immediately and permanently deletes your account, every course you created, and your round history. This action cannot be undone.</p>
 
 <h2>Contact</h2>
-<p>Questions about this policy or your data can be sent to <a href="mailto:support@homecourse.app">support@homecourse.app</a>.</p>
+<p>Questions about this policy or your data can be sent to <a href="mailto:triangleshirtllc@gmail.com">triangleshirtllc@gmail.com</a>.</p>
 </body>
 </html>
 `;
