@@ -36,7 +36,7 @@ export function LoginScreen({ navigation }: Props) {
     >
       <View style={styles.header}>
         <Text style={styles.eyebrow}>ESTABLISHED FOR THE PUBLIC PARK</Text>
-        <Text style={styles.title}>Campus Golf</Text>
+        <Text style={styles.title}>Home Course</Text>
         <View style={styles.rule} />
         <Text style={styles.subtitle}>Play the park. Chase the course record.</Text>
       </View>

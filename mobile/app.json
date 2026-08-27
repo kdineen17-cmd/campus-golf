@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Campus Golf",
+    "name": "Home Course",
     "slug": "campus-golf",
     "owner": "kdineen17s-team",
     "version": "1.0.0",
@@ -18,7 +18,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.campusgolf.app",
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "Campus Golf uses your location to record tee and hole positions while you build a course, and to track your position while you play.",
+        "NSLocationWhenInUseUsageDescription": "Home Course uses your location to record tee and hole positions while you build a course, and to track your position while you play.",
         "ITSAppUsesNonExemptEncryption": false
       }
     },
@@ -45,7 +45,7 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "Campus Golf uses your location to record tee and hole positions while you build a course, and to track your position while you play."
+          "locationWhenInUsePermission": "Home Course uses your location to record tee and hole positions while you build a course, and to track your position while you play."
         }
       ],
       [
@@ -59,7 +59,7 @@
       [
         "expo-image-picker",
         {
-          "cameraPermission": "Campus Golf uses your camera to take a tee-box photo for each hole, so you can mark the flag position."
+          "cameraPermission": "Home Course uses your camera to take a tee-box photo for each hole, so you can mark the flag position."
         }
       ]
     ],

@@ -1,4 +1,4 @@
-# Campus Golf
+# Home Course
 
 Play golf around a park, campus, or any public space — trees, benches, and
 statues become tee boxes and holes. Design a course by walking it with your
