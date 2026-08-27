@@ -2,6 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { CourseListScreen } from "../screens/CourseListScreen";
 import { CreateCourseScreen } from "../screens/CreateCourseScreen";
+import { FriendsScreen } from "../screens/FriendsScreen";
 import { ProfileScreen } from "../screens/ProfileScreen";
 import { colors, fonts } from "../theme";
 import { MainTabParamList } from "./types";
@@ -36,6 +37,16 @@ export function MainTabNavigator() {
           title: "Create",
           tabBarIcon: ({ color, focused }) => (
             <Ionicons name={focused ? "add-circle" : "add-circle-outline"} size={20} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="FriendsTab"
+        component={FriendsScreen}
+        options={{
+          title: "Friends",
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? "people" : "people-outline"} size={20} color={color} />
           ),
         }}
       />

@@ -1,6 +1,6 @@
 import request from "supertest";
 import { describe, expect, it } from "vitest";
-import { app, createCourse, registerUser } from "./helpers";
+import { app, befriend, createCourse, registerUser } from "./helpers";
 
 describe("round history", () => {
   it("rejects fetching round history without auth", async () => {
@@ -62,6 +62,57 @@ describe("account deletion", () => {
     const leaderboard = await request(app).get(`/courses/${othersCourse.id}/rounds/leaderboard`);
     expect(leaderboard.status).toBe(200);
     expect(leaderboard.body.some((entry: { player: { id: string } }) => entry.player.id === user.id)).toBe(false);
+  });
+});
+
+describe("user profile", () => {
+  it("rejects fetching a profile without auth", async () => {
+    const { user } = await registerUser();
+    const res = await request(app).get(`/users/${user.id}/profile`);
+    expect(res.status).toBe(401);
+  });
+
+  it("returns your own profile with stats, rounds, and courses", async () => {
+    const { token, user } = await registerUser();
+    const course = await createCourse(token, { name: "My Own Course" });
+    const detail = await request(app).get(`/courses/${course.id}`);
+    await request(app)
+      .post(`/courses/${course.id}/rounds`)
+      .set("Authorization", `Bearer ${token}`)
+      .send({ holes: detail.body.holes.map((h: { id: string }) => ({ holeId: h.id, strokes: 4 })) });
+
+    const res = await request(app).get(`/users/${user.id}/profile`).set("Authorization", `Bearer ${token}`);
+    expect(res.status).toBe(200);
+    expect(res.body.user.username).toBe(user.username);
+    expect(res.body.roundsPlayed).toBe(1);
+    expect(res.body.coursesCreated).toBe(1);
+    expect(res.body.friendsCount).toBe(0);
+    expect(res.body.courses[0].name).toBe("My Own Course");
+    expect(res.body.rounds[0].totalStrokes).toBe(8);
+  });
+
+  it("lets a friend view the profile", async () => {
+    const a = await registerUser();
+    const b = await registerUser();
+    await befriend(a.token, b.user.username, b.token);
+
+    const res = await request(app).get(`/users/${b.user.id}/profile`).set("Authorization", `Bearer ${a.token}`);
+    expect(res.status).toBe(200);
+    expect(res.body.friendsCount).toBe(1);
+  });
+
+  it("blocks a non-friend from viewing the profile", async () => {
+    const a = await registerUser();
+    const b = await registerUser();
+
+    const res = await request(app).get(`/users/${b.user.id}/profile`).set("Authorization", `Bearer ${a.token}`);
+    expect(res.status).toBe(403);
+  });
+
+  it("404s for an unknown user id", async () => {
+    const { token } = await registerUser();
+    const res = await request(app).get("/users/does-not-exist/profile").set("Authorization", `Bearer ${token}`);
+    expect(res.status).toBe(404);
   });
 });
 

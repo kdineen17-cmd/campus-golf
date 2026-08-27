@@ -90,3 +90,37 @@ export interface RoundHistoryEntry {
   durationSecs: number | null;
   completedAt: string;
 }
+
+export interface Friend {
+  friendshipId: string;
+  friend: UserSummary;
+  since: string;
+  latestCourseAt: string | null;
+  courseCount: number;
+}
+
+export interface IncomingFriendRequest {
+  id: string;
+  from: UserSummary;
+  createdAt: string;
+}
+
+export interface OutgoingFriendRequest {
+  id: string;
+  to: UserSummary;
+  createdAt: string;
+}
+
+export interface FriendRequests {
+  incoming: IncomingFriendRequest[];
+  outgoing: OutgoingFriendRequest[];
+}
+
+export interface UserProfile {
+  user: UserSummary;
+  roundsPlayed: number;
+  coursesCreated: number;
+  friendsCount: number;
+  rounds: RoundHistoryEntry[];
+  courses: CourseSummary[];
+}

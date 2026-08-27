@@ -80,9 +80,11 @@ export function courseSummary(course: CourseRow) {
   };
 }
 
-// List all courses (most recent first).
-coursesRouter.get("/", async (_req, res) => {
+// List all courses (most recent first), optionally filtered to one creator.
+coursesRouter.get("/", async (req, res) => {
+  const creatorId = typeof req.query.creatorId === "string" ? req.query.creatorId : undefined;
   const courses = await prisma.course.findMany({
+    where: creatorId ? { creatorId } : undefined,
     orderBy: { createdAt: "desc" },
     include: { creator: { select: { id: true, username: true } }, holes: true },
   });

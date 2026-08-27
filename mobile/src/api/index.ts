@@ -3,12 +3,16 @@ import {
   AuthResponse,
   CourseDetail,
   CourseSummary,
+  Friend,
+  FriendRequests,
   LeaderboardEntry,
   NewCourseInput,
   NewHoleInput,
+  OutgoingFriendRequest,
   RoundHistoryEntry,
   RoundResult,
   UpdateCourseInput,
+  UserProfile,
 } from "./types";
 
 export const api = {
@@ -26,8 +30,9 @@ export const api = {
     });
   },
 
-  listCourses() {
-    return apiRequest<CourseSummary[]>("/courses");
+  listCourses(creatorId?: string) {
+    const query = creatorId ? `?creatorId=${encodeURIComponent(creatorId)}` : "";
+    return apiRequest<CourseSummary[]>(`/courses${query}`);
   },
 
   getCourse(courseId: string) {
@@ -64,6 +69,30 @@ export const api = {
 
   getLeaderboard(courseId: string) {
     return apiRequest<LeaderboardEntry[]>(`/courses/${courseId}/rounds/leaderboard`);
+  },
+
+  getFriends(token: string) {
+    return apiRequest<Friend[]>("/friends", { token });
+  },
+
+  getFriendRequests(token: string) {
+    return apiRequest<FriendRequests>("/friends/requests", { token });
+  },
+
+  sendFriendRequest(username: string, token: string) {
+    return apiRequest<OutgoingFriendRequest>("/friends/requests", { method: "POST", body: { username }, token });
+  },
+
+  acceptFriendRequest(requestId: string, token: string) {
+    return apiRequest<Friend>(`/friends/requests/${requestId}/accept`, { method: "POST", token });
+  },
+
+  removeFriendship(friendshipOrRequestId: string, token: string) {
+    return apiRequest<void>(`/friends/requests/${friendshipOrRequestId}`, { method: "DELETE", token });
+  },
+
+  getUserProfile(userId: string, token: string) {
+    return apiRequest<UserProfile>(`/users/${userId}/profile`, { token });
   },
 
   submitRound(
