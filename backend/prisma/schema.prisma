@@ -28,7 +28,7 @@ model Course {
   creatorId   String
   createdAt   DateTime @default(now())
 
-  creator User    @relation(fields: [creatorId], references: [id])
+  creator User    @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   holes   Hole[]
   rounds  Round[]
 
@@ -66,7 +66,7 @@ model Round {
   completedAt   DateTime  @default(now())
 
   course     Course      @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  player     User        @relation(fields: [playerId], references: [id])
+  player     User        @relation(fields: [playerId], references: [id], onDelete: Cascade)
   roundHoles RoundHole[]
 
   @@index([courseId, totalStrokes])

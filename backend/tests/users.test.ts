@@ -31,6 +31,40 @@ describe("round history", () => {
   });
 });
 
+describe("account deletion", () => {
+  it("rejects deleting without auth", async () => {
+    const res = await request(app).delete("/users/me");
+    expect(res.status).toBe(401);
+  });
+
+  it("deletes the account and cascades to owned courses and played rounds", async () => {
+    const { token, user } = await registerUser();
+    const other = await registerUser();
+
+    // A course they created.
+    const ownCourse = await createCourse(token, { name: "Deletion Test Course" });
+    // A round they played on someone else's course.
+    const othersCourse = await createCourse(other.token, { name: "Someone Else's Course" });
+    const detail = await request(app).get(`/courses/${othersCourse.id}`);
+    await request(app)
+      .post(`/courses/${othersCourse.id}/rounds`)
+      .set("Authorization", `Bearer ${token}`)
+      .send({ holes: detail.body.holes.map((h: { id: string }) => ({ holeId: h.id, strokes: 4 })) });
+
+    const res = await request(app).delete("/users/me").set("Authorization", `Bearer ${token}`);
+    expect(res.status).toBe(204);
+
+    // Their own course is gone.
+    const ownCourseAfter = await request(app).get(`/courses/${ownCourse.id}`);
+    expect(ownCourseAfter.status).toBe(404);
+
+    // The other user's course survives, but the deleted user's round on it is gone.
+    const leaderboard = await request(app).get(`/courses/${othersCourse.id}/rounds/leaderboard`);
+    expect(leaderboard.status).toBe(200);
+    expect(leaderboard.body.some((entry: { player: { id: string } }) => entry.player.id === user.id)).toBe(false);
+  });
+});
+
 describe("my courses", () => {
   it("rejects fetching my courses without auth", async () => {
     const res = await request(app).get("/users/me/courses");

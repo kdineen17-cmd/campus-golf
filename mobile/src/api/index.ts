@@ -58,6 +58,10 @@ export const api = {
     return apiRequest<CourseSummary[]>("/users/me/courses", { token });
   },
 
+  deleteAccount(token: string) {
+    return apiRequest<void>("/users/me", { method: "DELETE", token });
+  },
+
   getLeaderboard(courseId: string) {
     return apiRequest<LeaderboardEntry[]>(`/courses/${courseId}/rounds/leaderboard`);
   },
