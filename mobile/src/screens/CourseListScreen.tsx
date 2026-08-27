@@ -73,7 +73,7 @@ export function CourseListScreen({ navigation }: Props) {
   }, [courses, userLocation]);
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top + spacing.lg }]}>
+    <View style={[styles.container, { paddingTop: insets.top / 2 + spacing.lg }]}>
       <View style={styles.header}>
         <Text style={styles.title}>Courses</Text>
         <Text style={styles.subtitle}>

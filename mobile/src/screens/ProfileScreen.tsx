@@ -80,7 +80,7 @@ export function ProfileScreen({ navigation }: Props) {
   const coursesCreated = courses?.length ?? 0;
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top + spacing.lg }]}>
+    <View style={[styles.container, { paddingTop: insets.top / 2 + spacing.lg }]}>
       <View style={styles.header}>
         <Text style={styles.title}>{user?.username}</Text>
         <View style={styles.statsRow}>

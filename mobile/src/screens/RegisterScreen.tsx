@@ -34,7 +34,7 @@ export function RegisterScreen({ navigation }: Props) {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : undefined}
-      style={[styles.container, { paddingTop: insets.top + spacing.lg }]}
+      style={[styles.container, { paddingTop: insets.top / 2 + spacing.lg }]}
     >
       <View style={styles.header}>
         <Text style={styles.title}>Join Home Course</Text>

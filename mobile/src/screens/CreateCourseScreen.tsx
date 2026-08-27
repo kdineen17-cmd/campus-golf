@@ -110,7 +110,7 @@ export function CreateCourseScreen({ navigation }: Props) {
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
-      <ScrollView contentContainerStyle={[styles.scroll, { paddingTop: insets.top + spacing.lg }]}>
+      <ScrollView contentContainerStyle={[styles.scroll, { paddingTop: insets.top / 2 + spacing.lg }]}>
         <Text style={styles.title}>Design a course</Text>
         <Text style={styles.subtitle}>
           Walk to each tee and landmark, then tap to drop a pin at your live GPS location. Log your
