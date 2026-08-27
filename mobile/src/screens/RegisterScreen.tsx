@@ -35,7 +35,7 @@ export function RegisterScreen({ navigation }: Props) {
       style={styles.container}
     >
       <View style={styles.header}>
-        <Text style={styles.title}>Join Campus Golf</Text>
+        <Text style={styles.title}>Join Home Course</Text>
         <View style={styles.rule} />
         <Text style={styles.subtitle}>3-24 characters, letters/numbers/underscore for username.</Text>
       </View>

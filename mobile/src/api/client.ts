@@ -53,7 +53,7 @@ async function doFetch(path: string, options: RequestOptions): Promise<Response>
     });
   } catch {
     throw new ApiError(
-      `Could not reach the Campus Golf server at ${API_URL}. Check EXPO_PUBLIC_API_URL and that the backend is running.`,
+      `Could not reach the Home Course server at ${API_URL}. Check EXPO_PUBLIC_API_URL and that the backend is running.`,
       0
     );
   }

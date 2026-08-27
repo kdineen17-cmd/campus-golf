@@ -7,7 +7,7 @@ const PRIVACY_HTML = `<!DOCTYPE html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Campus Golf — Privacy Policy</title>
+<title>Home Course — Privacy Policy</title>
 <style>
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; max-width: 640px; margin: 0 auto; padding: 32px 20px 80px; color: #1a1a1a; line-height: 1.6; }
   h1 { font-size: 26px; margin-bottom: 4px; }
@@ -17,10 +17,10 @@ const PRIVACY_HTML = `<!DOCTYPE html>
 </style>
 </head>
 <body>
-<h1>Campus Golf Privacy Policy</h1>
+<h1>Home Course Privacy Policy</h1>
 <p class="updated">Last updated August 27, 2026</p>
 
-<p>Campus Golf ("we", "us") is a mobile app for designing and playing disc/frisbee golf courses. This page explains what information we collect, how it's used, and how you can delete it.</p>
+<p>Home Course ("we", "us") is a mobile app for designing and playing disc/frisbee golf courses. This page explains what information we collect, how it's used, and how you can delete it.</p>
 
 <h2>Information we collect</h2>
 <ul>
@@ -40,7 +40,7 @@ const PRIVACY_HTML = `<!DOCTYPE html>
 <p>Your data is retained as long as your account exists. You can permanently delete your account at any time from within the app: go to <strong>Profile → Delete my account</strong>. This immediately and permanently deletes your account, every course you created, and your round history. This action cannot be undone.</p>
 
 <h2>Contact</h2>
-<p>Questions about this policy or your data can be sent to <a href="mailto:support@campusgolf.app">support@campusgolf.app</a>.</p>
+<p>Questions about this policy or your data can be sent to <a href="mailto:support@homecourse.app">support@homecourse.app</a>.</p>
 </body>
 </html>
 `;
