@@ -2,9 +2,14 @@ name: Publish EAS Update
 
 on:
   push:
-    branches: [claude/campus-golf-mapper-c8uonc]
+    branches: [main, claude/campus-golf-mapper-c8uonc]
     paths: ["mobile/**"]
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "EAS Update branch/channel to publish to (leave blank to auto-pick: main -> production, anything else -> preview)"
+        type: string
+        default: ""
 
 permissions:
   contents: write
@@ -44,18 +49,35 @@ jobs:
             git push
           fi
 
+      - name: List EAS channels (diagnostic)
+        working-directory: mobile
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: npx --yes eas-cli@latest channel:list || true
+
       - name: Publish update
         working-directory: mobile
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
           EXPO_PUBLIC_API_URL: ${{ vars.EXPO_PUBLIC_API_URL }}
           FULL_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+          INPUT_BRANCH: ${{ github.event.inputs.branch }}
         run: |
           # Passed via env var (not spliced into the script) so quotes/newlines
           # in the commit message can't break shell parsing. Just the first
           # line, since EAS update messages are meant to be short summaries.
           UPDATE_MESSAGE=$(printf '%s' "${FULL_COMMIT_MESSAGE:-Manual publish}" | head -1)
+
+          if [ -n "$INPUT_BRANCH" ]; then
+            TARGET_BRANCH="$INPUT_BRANCH"
+          elif [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            TARGET_BRANCH="production"
+          else
+            TARGET_BRANCH="preview"
+          fi
+          echo "Publishing to EAS Update branch: $TARGET_BRANCH"
+
           npx --yes eas-cli@latest update \
-            --branch preview \
+            --branch "$TARGET_BRANCH" \
             --message "$UPDATE_MESSAGE" \
             --non-interactive
