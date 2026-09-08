@@ -76,6 +76,7 @@ export interface RoundResult {
 }
 
 export interface LeaderboardEntry {
+  id: string;
   rank: number;
   player: UserSummary;
   totalStrokes: number;
@@ -89,6 +90,24 @@ export interface RoundHistoryEntry {
   totalStrokes: number;
   durationSecs: number | null;
   completedAt: string;
+}
+
+export interface RoundHoleScore {
+  holeId: string;
+  index: number;
+  name: string | null;
+  par: number;
+  strokes: number;
+}
+
+export interface RoundDetail {
+  id: string;
+  course: { id: string; name: string };
+  player: UserSummary;
+  totalStrokes: number;
+  durationSecs: number | null;
+  completedAt: string;
+  holes: RoundHoleScore[];
 }
 
 export interface Friend {

@@ -99,6 +99,7 @@ roundsRouter.get("/leaderboard", async (req, res) => {
     .sort((a, b) => a.totalStrokes - b.totalStrokes)
     .slice(0, 50)
     .map((round, index) => ({
+      id: round.id,
       rank: index + 1,
       player: round.player,
       totalStrokes: round.totalStrokes,
@@ -107,4 +108,36 @@ roundsRouter.get("/leaderboard", async (req, res) => {
     }));
 
   res.json(leaderboard);
+});
+
+// A single round's hole-by-hole scorecard.
+roundsRouter.get("/:id", async (req, res) => {
+  const round = await prisma.round.findUnique({
+    where: { id: req.params.id },
+    include: {
+      player: { select: { id: true, username: true } },
+      course: { select: { id: true, name: true } },
+      roundHoles: { include: { hole: true }, orderBy: { hole: { index: "asc" } } },
+    },
+  });
+
+  if (!round || round.courseId !== courseIdParam(req)) {
+    return res.status(404).json({ error: "Round not found" });
+  }
+
+  res.json({
+    id: round.id,
+    course: round.course,
+    player: round.player,
+    totalStrokes: round.totalStrokes,
+    durationSecs: round.durationSecs,
+    completedAt: round.completedAt,
+    holes: round.roundHoles.map((rh) => ({
+      holeId: rh.hole.id,
+      index: rh.hole.index,
+      name: rh.hole.name,
+      par: rh.hole.par,
+      strokes: rh.strokes,
+    })),
+  });
 });

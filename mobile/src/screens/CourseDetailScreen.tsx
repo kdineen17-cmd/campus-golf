@@ -1,7 +1,7 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useCallback, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { api, ApiError, CourseDetail, LeaderboardEntry } from "../api";
 import { Button } from "../components/Button";
 import { HoleMap } from "../components/HoleMap";
@@ -138,14 +138,18 @@ export function CourseDetailScreen({ route, navigation }: Props) {
           <Text style={styles.empty}>No rounds yet — be the first to set the record.</Text>
         )}
         {leaderboard.map((entry) => (
-          <View key={`${entry.player.id}-${entry.rank}`} style={styles.leaderRow}>
+          <Pressable
+            key={`${entry.player.id}-${entry.rank}`}
+            style={styles.leaderRow}
+            onPress={() => navigation.navigate("RoundDetail", { courseId, roundId: entry.id })}
+          >
             <Text style={styles.leaderRank}>{entry.rank}</Text>
             <Text style={styles.leaderName}>{entry.player.username}</Text>
             <Text style={styles.leaderStrokes}>{entry.totalStrokes} strokes</Text>
             {entry.durationSecs != null && (
               <Text style={styles.leaderDuration}>{formatDuration(entry.durationSecs)}</Text>
             )}
-          </View>
+          </Pressable>
         ))}
 
         {isCreator && (

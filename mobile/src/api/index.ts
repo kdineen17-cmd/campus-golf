@@ -9,6 +9,7 @@ import {
   NewCourseInput,
   NewHoleInput,
   OutgoingFriendRequest,
+  RoundDetail,
   RoundHistoryEntry,
   RoundResult,
   UpdateCourseInput,
@@ -69,6 +70,10 @@ export const api = {
 
   getLeaderboard(courseId: string) {
     return apiRequest<LeaderboardEntry[]>(`/courses/${courseId}/rounds/leaderboard`);
+  },
+
+  getRound(courseId: string, roundId: string) {
+    return apiRequest<RoundDetail>(`/courses/${courseId}/rounds/${roundId}`);
   },
 
   getFriends(token: string) {

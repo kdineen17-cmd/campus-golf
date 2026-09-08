@@ -14,6 +14,7 @@ export type AppStackParamList = {
   MainTabs: undefined;
   CourseDetail: { courseId: string };
   Play: { courseId: string };
+  RoundDetail: { courseId: string; roundId: string };
   AddHole: { courseId: string };
   EditCourse: { courseId: string };
   Rules: undefined;

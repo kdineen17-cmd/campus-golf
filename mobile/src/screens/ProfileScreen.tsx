@@ -129,7 +129,10 @@ export function ProfileScreen({ navigation }: Props) {
           renderItem={({ item }) => {
             const relative = item.totalStrokes - item.course.totalPar;
             return (
-              <View style={styles.row}>
+              <Pressable
+                style={styles.row}
+                onPress={() => navigation.navigate("RoundDetail", { courseId: item.course.id, roundId: item.id })}
+              >
                 <View style={{ flex: 1 }}>
                   <Text style={styles.rowTitle}>{item.course.name}</Text>
                   <Text style={styles.meta}>
@@ -141,7 +144,7 @@ export function ProfileScreen({ navigation }: Props) {
                 <Text style={styles.relative}>
                   {relative === 0 ? "E" : relative > 0 ? `+${relative}` : relative}
                 </Text>
-              </View>
+              </Pressable>
             );
           }}
         />
