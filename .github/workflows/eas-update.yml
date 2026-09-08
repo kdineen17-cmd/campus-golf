@@ -53,7 +53,9 @@ jobs:
         working-directory: mobile
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        run: npx --yes eas-cli@latest channel:list || true
+        run: |
+          npx --yes eas-cli@latest channel:view production --json || true
+          npx --yes eas-cli@latest build:list --platform ios --profile production --limit 1 --json --non-interactive || true
 
       - name: Publish update
         working-directory: mobile
