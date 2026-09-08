@@ -17,6 +17,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.campusgolf.app",
+      "buildNumber": "2",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "Home Course uses your location to record tee and hole positions while you build a course, and to track your position while you play.",
         "ITSAppUsesNonExemptEncryption": false
