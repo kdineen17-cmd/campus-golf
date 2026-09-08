@@ -23,6 +23,7 @@ const linking: LinkingOptions<AppStackParamList> = {
         },
       },
       CourseDetail: "course/:courseId",
+      RoundDetail: "course/:courseId/round/:roundId",
       FriendProfile: "user/:userId/:username",
       Play: "play/:courseId",
       AddHole: "add-hole/:courseId",

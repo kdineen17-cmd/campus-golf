@@ -71,4 +71,24 @@ describe("rounds and leaderboard", () => {
     expect(leaderboard.body[0].player.id).toBe(better.user.id);
     expect(leaderboard.body[0].rank).toBe(1);
   });
+
+  it("returns a round's hole-by-hole scorecard", async () => {
+    const submit = await request(app)
+      .post(`/courses/${courseId}/rounds`)
+      .set("Authorization", `Bearer ${token}`)
+      .send({ durationSecs: 600, holes: holeIds.map((holeId, i) => ({ holeId, strokes: 3 + i })) });
+
+    const detail = await request(app).get(`/courses/${courseId}/rounds/${submit.body.id}`);
+    expect(detail.status).toBe(200);
+    expect(detail.body.id).toBe(submit.body.id);
+    expect(detail.body.totalStrokes).toBe(submit.body.totalStrokes);
+    expect(detail.body.holes).toHaveLength(holeIds.length);
+    expect(detail.body.holes[0]).toMatchObject({ holeId: holeIds[0], index: 0, strokes: 3 });
+  });
+
+  it("404s for a round id that doesn't belong to the course", async () => {
+    const otherCourse = await createCourse(token);
+    const res = await request(app).get(`/courses/${otherCourse.id}/rounds/does-not-exist`);
+    expect(res.status).toBe(404);
+  });
 });
